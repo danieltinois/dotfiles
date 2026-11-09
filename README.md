@@ -3,6 +3,8 @@
 Daniel's dev setup (macOS, Apple Silicon), with a focus on running AI coding agents (Claude Code and Codex)
 safely. Paths assume the repo lives at `~/development/dotfiles`; adjust them if you copy anything.
 
+Guide and docs page: https://danieltinois.github.io/dotfiles/
+
 | File | What it is | Where it is linked |
 | --- | --- | --- |
 | `Brewfile` | CLIs and apps | `brew bundle --file ~/development/dotfiles/Brewfile` |
