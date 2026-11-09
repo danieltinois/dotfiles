@@ -19,7 +19,8 @@ Setup de dev do Daniel (macOS, Apple Silicon).
   `push --force`, `--no-verify`, atribuição de IA em commit/PR, `rm -rf` na raiz/home e alterar
   config de lint/format/git hooks que já existe (`analysis_options.yaml`, eslint, prettier, biome,
   lefthook, husky, ruff…). Criar uma config nova pode; mudar regra de lint, só o Daniel na mão.
-  No Grep/Glob, testa se cada parte do glob casaria com um nome de segredo (pega `.en?`, `.e[n]v`, `.{env,x}`).
+  No Grep/Glob, expande as chaves (com teto) e testa se cada parte do glob casaria com uma família de segredo
+  (`.env`/`.env.<algo>`, `*.pem`/`.key`/…, `id_rsa`, `~/.ssh`…), pegando `.en?`, `.e[n]v`, `{a/.env,b}`, `*nv.q?`.
 - `format-on-edit.sh` (PostToolUse): formata o arquivo editado com o formatter do projeto. Só procura
   até a raiz do repo, e o `uvx ruff` roda com `--no-config` (o repo não escolhe de onde o ruff vem).
   Ferramenta escolhida pelo repo (prettier do `node_modules`, SDK do `.fvmrc`) só roda em repo dentro de uma

@@ -28,37 +28,58 @@ if [[ $tool == Read ]]; then
   exit 0
 fi
 
-# Grep lê conteúdo e Glob lista arquivos. Em vez de regex sobre o texto do glob (fácil de driblar com `?`, `[]`, `{}`),
-# testa se cada parte do caminho/glob CASARIA com um nome de segredo, usando o próprio pattern matching do bash.
-secret_files=(.env .env.local .env.production .env.development .env.staging x.pem x.key x.p12 x.jks x.keystore
-  id_rsa id_ed25519 id_ecdsa key.properties auth.json)
+# Grep lê conteúdo e Glob lista arquivos. Regex sobre o texto do glob é fácil de driblar (`?`, `[]`, `{}`), então:
+# 1) expande as chaves do glob inteiro (sem eval, com teto); 2) cada alternativa literal passa pelo `secret` do Read;
+# 3) com curinga, pergunta ao próprio pattern matching do bash se ela CASARIA com algum segredo — por família, não
+#    por lista: `.env` ou `.env.<qualquer coisa>`, `<qualquer coisa>.pem/.key/…`, e os nomes/pastas fixos.
+max_alts=256
+secret_exts=(.pem .key .p12 .jks .keystore)
+secret_names=(id_rsa id_ed25519 id_ecdsa key.properties auth.json)
 secret_dirs=(.ssh .aws .gnupg)
-# Expande `{a,b}` sem eval (o glob vem do agente, não pode virar código).
-expand_braces() {
+expand_braces() { # imprime as alternativas; passou do teto, imprime __CAP__ e para
+  if (( ${#1} > 1024 )); then echo __CAP__; exit; fi
   if [[ $1 =~ ^(.*)\{([^{}]*)\}(.*)$ ]]; then
     local pre=${BASH_REMATCH[1]} post=${BASH_REMATCH[3]} alts a
     IFS=, read -ra alts <<<"${BASH_REMATCH[2]},"
     for a in "${alts[@]}"; do expand_braces "$pre$a$post"; done
-  else printf '%s\n' "$1"; fi
+  else
+    (( ++n_alts > max_alts )) && { echo __CAP__; exit; }
+    printf '%s\n' "$1"
+  fi
 }
-part_matches() { # $1 = parte do glob, demais = nomes de segredo
-  local part=$1 alt name; shift
-  while IFS= read -r alt; do
-    [[ $alt == '' || $alt == '*' || $alt == '**' || $alt == '*.*' ]] && continue # curinga puro: não aponta para segredo
-    for name in "$@"; do [[ $name == $alt ]] && return 0; done
-  done < <(expand_braces "$part")
+# "Específico": o pedaço do glob casa com o segredo E não casa com nenhum nome-isca de formato parecido.
+# Assim `*`, `.*`, `*.*`, `*.dart` (que casam com qualquer coisa) passam, e `.en?`, `*nv.q?`, `*.p?m` são barrados.
+decoys=(zzzz zzzz. .zzzz .zzzz. zz.zz .zz.zz zz_zz)
+specific() { # $1 segredo, $2 glob
+  local d
+  [[ $1 == $2 ]] || return 1
+  for d in "${decoys[@]}"; do [[ $d == $2 ]] && return 1; done
+  return 0
+}
+file_could_be_secret() { # $1 = último pedaço do glob, com curinga
+  local g=$1 k e n
+  specific .env "$g" && return 0
+  for (( k = 1; k <= ${#g}; k++ )); do
+    specific .env. "${g:0:k}" && return 0                            # prefixo casa ".env." → casa .env.<algo>
+    for e in "${secret_exts[@]}"; do specific "$e" "${g:k-1}" && return 0; done # sufixo casa ".pem" etc.
+  done
+  for n in "${secret_names[@]}"; do specific "$n" "$g" && return 0; done
   return 1
 }
+dir_could_be_secret() { local d; for d in "${secret_dirs[@]}"; do specific "$d" "$1" && return 0; done; return 1; }
 globs_secret() {
-  local p parts i
+  local p alt parts i
   p=$(tr '[:upper:]' '[:lower:]' <<<"$1")
-  (( $(tr -cd '{' <<<"$p" | wc -c) > 8 )) && return 0 # brace bomb: trata como suspeito
-  touches_secret "$p" && return 0
-  IFS=/ read -ra parts <<<"$p"
-  for i in "${!parts[@]}"; do
-    part_matches "${parts[i]}" "${secret_dirs[@]}" && return 0
-    (( i == ${#parts[@]} - 1 )) && part_matches "${parts[i]}" "${secret_files[@]}" && return 0
-  done
+  while IFS= read -r alt; do
+    [[ $alt == __CAP__ ]] && return 0 # expansão grande demais: trata como suspeito em vez de estourar o timeout
+    touches_secret "$alt" && return 0
+    IFS=/ read -ra parts <<<"$alt"
+    for i in "${!parts[@]}"; do
+      dir_could_be_secret "${parts[i]}" && return 0 # pega `~/.ssh` sem barra e `.s?h`
+      # arquivo literal já passou pelo touches_secret (que respeita .env.example); aqui só o que tem curinga
+      (( i == ${#parts[@]} - 1 )) && [[ ${parts[i]} == *[\*\?\[]* ]] && file_could_be_secret "${parts[i]}" && return 0
+    done
+  done < <(n_alts=0; expand_braces "$p")
   return 1
 }
 if [[ $tool == Grep || $tool == Glob ]]; then

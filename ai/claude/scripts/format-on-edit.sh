@@ -8,6 +8,8 @@ f=$(jq -r '.tool_response.filePath // .tool_input.file_path // empty')
 [[ -n $f && -f $f ]] || exit 0
 dir=$(cd "$(dirname "$f")" && pwd -P) || exit 0
 top=$(git -c core.fsmonitor=false -C "$dir" rev-parse --show-toplevel 2>/dev/null) || top=$dir
+# `core.worktree` no .git/config do repo pode apontar a "raiz" para qualquer lugar: só vale se contém o arquivo.
+[[ $dir == "$top" || $dir == "$top"/* ]] || top=$dir
 up() {
   local d=$dir
   while :; do
@@ -22,7 +24,7 @@ trusted_repo() {
     while IFS= read -r r; do
       r=${r/#\~/$HOME}; [[ -n $r && $r != \#* ]] || continue
       r=$(cd "$r" 2>/dev/null && pwd -P) || continue
-      [[ $top == "$r" || $top == "$r"/* ]] && exit 0
+      [[ $top == "$r" || $top == "$r"/* ]] && [[ $dir == "$r"/* ]] && exit 0
     done
     exit 1
   }
