@@ -32,6 +32,29 @@ Setup de dev do Daniel (macOS, Apple Silicon).
   terceiros não executa nada) e remove caracteres de controle de pasta/branch. Se o próprio repo define
   filtros clean/smudge (`filter.*` fora do global/system), não roda `git status` e mostra `?` em vez de `*`.
 
+## Sandbox do Claude Code (`ai/claude/sandbox.json`)
+
+A barreira forte. Os hooks acima filtram texto (dá para driblar); o sandbox roda cada comando Bash dentro do
+Seatbelt do macOS e o próprio sistema nega o acesso. Copie o bloco `sandbox` para o `~/.claude/settings.json`.
+
+- **Escrita:** só na pasta do projeto, no temp e em caches de pacote **sem executáveis** (`~/.pub-cache/hosted`,
+  `~/.npm/_cacache`, `~/Library/pnpm/store`, `~/.bun/install/cache`, `~/.gradle/caches`, DerivedData do Xcode…).
+  De propósito ficam de fora: `~/.cache` (o p10k do zsh carrega um script dali em todo terminal),
+  `~/.pub-cache/bin` e `~/Library/pnpm` (estão no `PATH`), `~/fvm` (o SDK do Flutter), `~/.gradle/init.d` e
+  `~/.npm/_npx` (usado por servidores MCP via `npx`). Liberar escrita nelas deixaria um comando sandboxed plantar
+  algo que depois roda **fora** do sandbox.
+- **Flutter:** precisa escrever no próprio SDK (`~/fvm/versions/*/bin/cache`), então falha no sandbox e o Claude
+  pede para rodar fora, comando a comando. Para não ser perguntado, dá para pôr `"fvm *", "flutter *", "dart *"`
+  em `excludedCommands` — aí eles rodam com acesso total, como antes do sandbox.
+- **Leitura:** tudo, menos `~/.ssh`, `~/.aws`, `~/.gnupg`, `~/.codex/auth.json`, `~/.config/gh/hosts.yml`. Os `deny`
+  de `Read(...)` do `permissions` também entram aqui (`.env`, `*.pem`, `*.key`…), então nem um script lê esses arquivos.
+- **Rede:** passa por um proxy com lista de domínios (GitHub, npm, PyPI, pub.dev, Flutter, Azure DevOps). Fora do
+  modo manual, host fora da lista pode ser aprovado pelo classificador do modo auto; para recusar sempre, use
+  `"network": {"strictAllowlist": true}`.
+- **Fora do sandbox:** `docker`, `gh` (TLS no macOS) e `open`, conforme a doc oficial. Hooks, MCP e statusline
+  também rodam fora (a doc diz que o sandbox cobre só comandos de shell).
+- `autoAllowBashIfSandboxed: false`: o sandbox não muda os prompts de permissão, só limita o que o comando alcança.
+
 ## Máquina nova
 
 ```bash

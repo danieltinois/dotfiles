@@ -1,0 +1,54 @@
+{
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": false,
+    "excludedCommands": [
+      "docker *",
+      "gh *",
+      "open *"
+    ],
+    "filesystem": {
+      "allowWrite": [
+        "~/.pub-cache/hosted",
+        "~/.pub-cache/hosted-hashes",
+        "~/.pub-cache/git",
+        "~/.pub-cache/_temp",
+        "~/.npm/_cacache",
+        "~/Library/pnpm/store",
+        "~/.bun/install/cache",
+        "~/.gradle/caches",
+        "~/.gradle/daemon",
+        "~/.gradle/native",
+        "~/.gradle/.tmp",
+        "~/Library/Developer/Xcode/DerivedData"
+      ],
+      "denyRead": [
+        "~/.ssh",
+        "~/.aws",
+        "~/.gnupg",
+        "~/.codex/auth.json",
+        "~/.config/gh/hosts.yml"
+      ]
+    },
+    "network": {
+      "allowedDomains": [
+        "github.com",
+        "*.github.com",
+        "*.githubusercontent.com",
+        "registry.npmjs.org",
+        "*.npmjs.org",
+        "registry.yarnpkg.com",
+        "pypi.org",
+        "files.pythonhosted.org",
+        "pub.dev",
+        "*.pub.dev",
+        "storage.googleapis.com",
+        "*.flutter.dev",
+        "dev.azure.com",
+        "*.dev.azure.com",
+        "*.visualstudio.com"
+      ],
+      "allowLocalBinding": true
+    }
+  }
+}

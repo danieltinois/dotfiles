@@ -6,7 +6,7 @@ tool=$(jq -r '.tool_name // empty' <<<"$in")
 block() { echo "Bloqueado pelo guard.sh: $1. Se for intencional, peça para o Daniel rodar manualmente." >&2; exit 2; }
 
 # .env de verdade (não .env.example/.sample/.template) e arquivos de chave
-secret='(^|[/[:space:]"'\''=])\.env(\.[a-z0-9_-]+)*($|[[:space:]"'\'';|&)])|[a-z0-9_-]\.(pem|key|p12|jks|keystore)($|[[:space:]"'\'';|&)])|id_(rsa|ed25519|ecdsa)|key\.properties|\.ssh/|\.aws/credentials|\.codex/auth\.json'
+secret='(^|[/[:space:]"'\''=])\.env(\.[a-z0-9_-]+)*($|[[:space:]"'\'';|&)])|[^/[:space:]"'\''.]\.(pem|key|p12|jks|keystore)($|[[:space:]"'\'';|&)])|id_(rsa|ed25519|ecdsa)|key\.properties|\.ssh/|\.aws/credentials|\.codex/auth\.json'
 example='\.env\.(example|sample|template|dist)'
 
 touches_secret() { tr '[:upper:]' '[:lower:]' <<<"$1" | sed -E "s/$example//g" | grep -qE "$secret"; }
@@ -61,7 +61,11 @@ could_match() { # $1 = pedaço do glob, demais = segredos ("@env" = família .en
   first=${runs[0]}; last=${runs[${#runs[@]}-1]}; [[ $g == *'*' ]] && last=''
   for s in "$@"; do
     local stem=${s/#@env/.env}
-    if [[ -n $first ]]; then # ancorado no começo
+    if [[ $s == .* && $s != @env && " ${secret_exts[*]} " == *" $s "* ]]; then
+      # extensão (`x.pem`): o começo pode ser qualquer coisa, só o fim decide (`s*.key`, `*.p*` → barra)
+      if [[ -n $last ]]; then [[ $stem == *"$last" || $last == *"$stem" ]] && return 0
+      else for L in "${runs[@]:1}"; do [[ -n $L && ( $stem == *"$L"* || $L == *"$stem"* ) ]] && return 0; done; fi
+    elif [[ -n $first ]]; then # ancorado no começo
       [[ $stem == "$first"* || ( $s == @env && $first == "$stem"* ) || $first == "$stem" ]] && return 0
     elif [[ -n $last ]]; then # ancorado no fim
       [[ $stem == *"$last" || $last == *"$stem" ]] && return 0
