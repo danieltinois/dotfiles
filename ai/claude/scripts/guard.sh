@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# PreToolUse (Bash|Read|Edit|Write|MultiEdit|NotebookEdit): barra o que as regras do AGENTS.md proíbem.
+# PreToolUse (Bash|Read|Grep|Glob|Edit|Write|MultiEdit|NotebookEdit): barra o que as regras do AGENTS.md proíbem.
 # Exit 2 bloqueia e devolve o motivo ao agente.
 in=$(cat)
 tool=$(jq -r '.tool_name // empty' <<<"$in")
@@ -25,6 +25,15 @@ fi
 if [[ $tool == Read ]]; then
   f=$(jq -r '.tool_input.file_path // empty' <<<"$in")
   touches_secret "$f" && block "leitura de segredo ($f)"
+  exit 0
+fi
+
+# Grep lê conteúdo e Glob lista arquivos: checa caminho e glob. `*` vira " " e "x" para `.env*` e `.env.*` casarem.
+if [[ $tool == Grep || $tool == Glob ]]; then
+  while IFS= read -r p; do
+    [[ -n $p ]] || continue
+    touches_secret "${p//\*/ }" || touches_secret "${p//\*/x}" && block "busca em segredo ($p)"
+  done < <(jq -r --arg t "$tool" '.tool_input | .path, .glob, (if $t == "Glob" then .pattern else empty end) | values' <<<"$in")
   exit 0
 fi
 

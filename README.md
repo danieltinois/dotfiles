@@ -15,11 +15,15 @@ Setup de dev do Daniel (macOS, Apple Silicon).
 
 ## Hooks do Claude Code (`~/.claude/settings.json`)
 
-- `guard.sh` (PreToolUse, Bash/Read/Edit/Write/MultiEdit/NotebookEdit): bloqueia ler `.env`/chaves,
+- `guard.sh` (PreToolUse, Bash/Read/Grep/Glob/Edit/Write/MultiEdit/NotebookEdit): bloqueia ler ou buscar em `.env`/chaves,
   `push --force`, `--no-verify`, atribuição de IA em commit/PR, `rm -rf` na raiz/home e alterar
   config de lint/format/git hooks que já existe (`analysis_options.yaml`, eslint, prettier, biome,
   lefthook, husky, ruff…). Criar uma config nova pode; mudar regra de lint, só o Daniel na mão.
-- `format-on-edit.sh` (PostToolUse): formata o arquivo editado com o formatter do projeto.
+- `format-on-edit.sh` (PostToolUse): formata o arquivo editado com o formatter do projeto. Só procura
+  até a raiz do repo, só roda binário do projeto que seja seu e não gravável por outros, e o `uvx ruff`
+  roda com `--no-config` (o repo não escolhe de onde o ruff vem).
+- `statusline.sh`: o `git` roda com `core.fsmonitor=false` e `--no-optional-locks` (um `.git/config` de
+  terceiros não executa nada) e remove caracteres de controle de pasta/branch.
 
 ## Máquina nova
 

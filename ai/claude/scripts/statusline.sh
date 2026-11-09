@@ -6,13 +6,19 @@ input=$(cat)
 j() { jq -r "$1" <<<"$input"; }
 R=$'\e[0m' DIM=$'\e[2m' CYAN=$'\e[36m' MAG=$'\e[35m' GRN=$'\e[32m' YEL=$'\e[33m' RED=$'\e[31m'
 
-model=$(j '.model.display_name // "?"')
+# Repo de terceiros não executa nada daqui: sem fsmonitor do .git/config, sem lock no índice.
+g() { git --no-optional-locks -c core.fsmonitor=false -C "$dir" "$@" 2>/dev/null; }
+# Nome de pasta/branch pode trazer sequência de escape de terminal.
+clean() { tr -d '[:cntrl:]' <<<"$1"; }
+
+model=$(clean "$(j '.model.display_name // "?"')")
 dir=$(j '.workspace.current_dir // .cwd // ""')
-line1="${MAG}${model}${R} ${DIM}·${R} ${CYAN}${dir##*/}${R}"
-if branch=$(git -C "$dir" symbolic-ref --short HEAD 2>/dev/null); then
-  [[ -n $(git -C "$dir" status --porcelain 2>/dev/null | head -1) ]] && branch="$branch*"
+line1="${MAG}${model}${R} ${DIM}·${R} ${CYAN}$(clean "${dir##*/}")${R}"
+if branch=$(g symbolic-ref --short HEAD); then
+  branch=$(clean "$branch")
+  [[ -n $(g status --porcelain | head -1) ]] && branch="$branch*"
   line1+=" ${DIM}·${R} ${GRN} ${branch}${R}"
-  root=$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null)
+  root=$(g rev-parse --show-toplevel)
   [[ -f $root/graphify-out/graph.json ]] && line1+=" ${YEL}◆${R}"
 fi
 
