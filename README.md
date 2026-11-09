@@ -23,7 +23,8 @@ Setup de dev do Daniel (macOS, Apple Silicon).
   até a raiz do repo, só roda binário do projeto que seja seu e não gravável por outros, e o `uvx ruff`
   roda com `--no-config` (o repo não escolhe de onde o ruff vem).
 - `statusline.sh`: o `git` roda com `core.fsmonitor=false` e `--no-optional-locks` (um `.git/config` de
-  terceiros não executa nada) e remove caracteres de controle de pasta/branch.
+  terceiros não executa nada) e remove caracteres de controle de pasta/branch. Se o próprio repo define
+  filtros clean/smudge (`filter.*` fora do global/system), não roda `git status` e mostra `?` em vez de `*`.
 
 ## Máquina nova
 

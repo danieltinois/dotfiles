@@ -6,8 +6,10 @@ input=$(cat)
 j() { jq -r "$1" <<<"$input"; }
 R=$'\e[0m' DIM=$'\e[2m' CYAN=$'\e[36m' MAG=$'\e[35m' GRN=$'\e[32m' YEL=$'\e[33m' RED=$'\e[31m'
 
-# Repo de terceiros não executa nada daqui: sem fsmonitor do .git/config, sem lock no índice.
+# Repo de terceiros não executa nada daqui: sem fsmonitor do .git/config, sem lock no índice, sem submódulos.
 g() { git --no-optional-locks -c core.fsmonitor=false -C "$dir" "$@" 2>/dev/null; }
+# `git status` roda filtros clean/smudge. Filtro definido pelo próprio repo (não pelo seu global/system) = não confia.
+repo_filters() { g config --show-scope --includes --get-regexp '^filter\.' | grep -qvE '^(global|system)[[:space:]]'; }
 # Nome de pasta/branch pode trazer sequência de escape de terminal.
 clean() { tr -d '[:cntrl:]' <<<"$1"; }
 
@@ -16,7 +18,8 @@ dir=$(j '.workspace.current_dir // .cwd // ""')
 line1="${MAG}${model}${R} ${DIM}·${R} ${CYAN}$(clean "${dir##*/}")${R}"
 if branch=$(g symbolic-ref --short HEAD); then
   branch=$(clean "$branch")
-  [[ -n $(g status --porcelain | head -1) ]] && branch="$branch*"
+  if repo_filters; then branch="$branch?"
+  elif [[ -n $(g status --porcelain --ignore-submodules | head -1) ]]; then branch="$branch*"; fi
   line1+=" ${DIM}·${R} ${GRN} ${branch}${R}"
   root=$(g rev-parse --show-toplevel)
   [[ -f $root/graphify-out/graph.json ]] && line1+=" ${YEL}◆${R}"
