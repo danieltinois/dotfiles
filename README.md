@@ -3,7 +3,7 @@
 Daniel's dev setup (macOS, Apple Silicon), with a focus on running AI coding agents (Claude Code and Codex)
 safely. Paths assume the repo lives at `~/development/dotfiles`; adjust them if you copy anything.
 
-Guide and docs page: https://danieltinois.github.io/dotfiles/
+Guide and docs page, in English and Brazilian Portuguese: https://danieltinois.github.io/dotfiles/
 
 | File | What it is | Where it is linked |
 | --- | --- | --- |
