@@ -19,9 +19,12 @@ Setup de dev do Daniel (macOS, Apple Silicon).
   `push --force`, `--no-verify`, atribuição de IA em commit/PR, `rm -rf` na raiz/home e alterar
   config de lint/format/git hooks que já existe (`analysis_options.yaml`, eslint, prettier, biome,
   lefthook, husky, ruff…). Criar uma config nova pode; mudar regra de lint, só o Daniel na mão.
+  No Grep/Glob, testa se cada parte do glob casaria com um nome de segredo (pega `.en?`, `.e[n]v`, `.{env,x}`).
 - `format-on-edit.sh` (PostToolUse): formata o arquivo editado com o formatter do projeto. Só procura
-  até a raiz do repo, só roda binário do projeto que seja seu e não gravável por outros, e o `uvx ruff`
-  roda com `--no-config` (o repo não escolhe de onde o ruff vem).
+  até a raiz do repo, e o `uvx ruff` roda com `--no-config` (o repo não escolhe de onde o ruff vem).
+  Ferramenta escolhida pelo repo (prettier do `node_modules`, SDK do `.fvmrc`) só roda em repo dentro de uma
+  pasta confiável, listada em `~/.config/claude-hooks/trusted-roots` (uma por linha; sem o arquivo, vale
+  `~/development`). Repo clonado só para olhar fica de fora e não executa nada dele.
 - `statusline.sh`: o `git` roda com `core.fsmonitor=false` e `--no-optional-locks` (um `.git/config` de
   terceiros não executa nada) e remove caracteres de controle de pasta/branch. Se o próprio repo define
   filtros clean/smudge (`filter.*` fora do global/system), não roda `git status` e mostra `?` em vez de `*`.
