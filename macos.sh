@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Preferências do macOS para um setup minimalista de dev. Idempotente: pode rodar de novo a qualquer hora.
-# Uso: bash ~/development/dotfiles/macos.sh   (algumas mudanças pedem logout para valer 100%)
+# macOS preferences for a minimal dev setup. Idempotent: safe to run again at any time.
+# Usage: bash ~/development/dotfiles/macos.sh   (some changes need a logout to fully apply)
 set -euo pipefail
 
-# --- Dock: escondido, rápido, sem distração ---
+# --- Dock: hidden, fast, no distractions ---
 defaults write com.apple.dock autohide -bool true
 defaults write com.apple.dock autohide-delay -float 0
 defaults write com.apple.dock autohide-time-modifier -float 0.3
@@ -11,41 +11,41 @@ defaults write com.apple.dock tile-size -int 44
 defaults write com.apple.dock magnification -bool false
 defaults write com.apple.dock show-recents -bool false
 defaults write com.apple.dock minimize-to-application -bool true
-defaults write com.apple.dock mru-spaces -bool false          # não reordena os Spaces sozinho
-defaults write com.apple.dock expose-group-apps -bool true    # Mission Control agrupado por app
-# Dock só com apps abertos (o Raycast vira o launcher). Descomente se curtir:
+defaults write com.apple.dock mru-spaces -bool false          # don't reorder Spaces automatically
+defaults write com.apple.dock expose-group-apps -bool true    # Mission Control grouped by app
+# Dock with open apps only (Raycast becomes the launcher). Uncomment if you like it:
 # defaults write com.apple.dock static-only -bool true
 
-# --- Desktop: limpo ---
-defaults write com.apple.finder CreateDesktop -bool false     # sem ícones na mesa
+# --- Desktop: clean ---
+defaults write com.apple.finder CreateDesktop -bool false     # no icons on the desktop
 defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -bool false
-defaults write com.apple.WindowManager GloballyEnabled -bool false   # Stage Manager desligado
+defaults write com.apple.WindowManager GloballyEnabled -bool false   # Stage Manager off
 
-# --- Barra de menu ---
-# Esconder a barra de menu inteira até passar o mouse. Descomente se curtir:
+# --- Menu bar ---
+# Hide the whole menu bar until you hover over it. Uncomment if you like it:
 # defaults write NSGlobalDomain _HIHideMenuBar -bool true
 
 # --- Finder ---
-defaults write com.apple.finder FXPreferredViewStyle -string Nlsv     # lista
+defaults write com.apple.finder FXPreferredViewStyle -string Nlsv     # list view
 defaults write com.apple.finder _FXSortFoldersFirst -bool true
 defaults write com.apple.finder ShowPathbar -bool true
 defaults write com.apple.finder ShowStatusBar -bool true
 defaults write com.apple.finder ShowRecentTags -bool false
-defaults write com.apple.finder FXDefaultSearchScope -string SCcf     # busca na pasta atual
+defaults write com.apple.finder FXDefaultSearchScope -string SCcf     # search the current folder
 defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
 defaults write com.apple.finder NewWindowTarget -string PfLo
 defaults write com.apple.finder NewWindowTargetPath -string "file://$HOME/development/"
-defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true   # sem .DS_Store em rede
-defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true       # nem em pendrive
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true   # no .DS_Store on network drives
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true       # nor on USB drives
 
-# --- Sistema ---
+# --- System ---
 defaults write NSGlobalDomain AppleInterfaceStyle -string Dark
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 defaults write NSGlobalDomain AppleShowScrollBars -string WhenScrolling
 defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
 defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
 
-# --- Teclado de programador (sem autocorreção, repetição rápida) ---
+# --- Programmer keyboard (no autocorrect, fast key repeat) ---
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 defaults write NSGlobalDomain InitialKeyRepeat -int 15
 defaults write NSGlobalDomain KeyRepeat -int 2
@@ -54,11 +54,11 @@ for k in NSAutomaticCapitalizationEnabled NSAutomaticDashSubstitutionEnabled NSA
   defaults write NSGlobalDomain "$k" -bool false
 done
 
-# --- Screenshots: pasta própria, png, sem sombra ---
+# --- Screenshots: own folder, png, no shadow ---
 mkdir -p "$HOME/Screenshots"
 defaults write com.apple.screencapture location -string "$HOME/Screenshots"
 defaults write com.apple.screencapture type -string png
 defaults write com.apple.screencapture disable-shadow -bool true
 
 killall Dock Finder SystemUIServer 2>/dev/null || true
-echo "Pronto. Algumas mudanças (teclado, barra de menu) só valem 100% depois de logout/login."
+echo "Done. Some changes (keyboard, menu bar) only fully apply after logging out and back in."

@@ -1,19 +1,19 @@
 ---
 name: codex-review
-description: Pede uma segunda opinião do Codex (outro modelo) sobre o diff atual antes de commitar ou abrir PR. Use quando o Daniel pedir "revisa com o codex", "segunda opinião", "/codex-review", ou ao terminar uma mudança grande antes de dizer que está pronto.
+description: Asks Codex (another model) for a second opinion on the current diff before committing or opening a PR. Use when Daniel asks for "revisa com o codex", "segunda opinião", "/codex-review", "review with codex", "second opinion", or when finishing a big change before saying it is ready.
 ---
 
-# Review cruzado com o Codex
+# Cross-review with Codex
 
-Um modelo revisando o código do outro pega bugs que o autor não vê.
+One model reviewing the other's code catches bugs the author does not see.
 
-1. Descubra o alvo:
-   - Mudanças não commitadas → `codex review --uncommitted`
-   - Branch inteira → `codex review --base <branch-base>` (normalmente `main` ou `develop`; confira com `git branch -a`)
-   - Um commit → `codex review --commit <sha>`
-2. Rode em background (pode levar alguns minutos) e espere a notificação, sem ficar consultando:
-   `codex review --uncommitted "Foque em bugs de corretude, segurança e dados pessoais (LGPD). Ignore estilo." > "$TMPDIR/codex-review.md" 2>&1`
-3. Leia o resultado e trate cada apontamento com rigor (skill `superpowers:receiving-code-review`):
-   confirme no código se é real antes de aceitar; não concorde só por concordar.
-4. Responda ao Daniel com uma tabela curta: apontamento → real/falso positivo → o que fazer.
-   Só aplique correções se ele pedir.
+1. Pick the target:
+   - Uncommitted changes → `codex review --uncommitted`
+   - Whole branch → `codex review --base <base-branch>` (usually `main` or `develop`; check with `git branch -a`)
+   - One commit → `codex review --commit <sha>`
+2. Run it in the background (it can take a few minutes) and wait for the notification, without polling:
+   `codex review --uncommitted "Focus on correctness bugs, security and personal data (LGPD). Ignore style." > "$TMPDIR/codex-review.md" 2>&1`
+3. Read the result and treat each finding rigorously (skill `superpowers:receiving-code-review`):
+   confirm in the code that it is real before accepting it; don't agree just to agree.
+4. Answer Daniel with a short table: finding → real/false positive → what to do.
+   Only apply fixes if he asks.

@@ -1,19 +1,19 @@
 ---
 name: claude-review
-description: Pede uma segunda opinião do Claude Code (outro modelo) sobre o diff atual antes de commitar ou abrir PR. Use quando o Daniel pedir "revisa com o claude", "segunda opinião", ou ao terminar uma mudança grande antes de dizer que está pronto.
+description: Asks Claude Code (another model) for a second opinion on the current diff before committing or opening a PR. Use when Daniel asks for "revisa com o claude", "segunda opinião", "review with claude", "second opinion", or when finishing a big change before saying it is ready.
 ---
 
-# Review cruzado com o Claude
+# Cross-review with Claude
 
-Um modelo revisando o código do outro pega bugs que o autor não vê.
+One model reviewing the other's code catches bugs the author does not see.
 
-1. Monte o diff alvo: `git diff HEAD` (não commitado) ou `git diff <base>...HEAD` (branch).
-2. Rode o Claude em modo não interativo e só leitura:
+1. Build the target diff: `git diff HEAD` (uncommitted) or `git diff <base>...HEAD` (branch).
+2. Run Claude non-interactively and read-only:
    ```bash
-   claude -p "Revise o diff de 'git diff HEAD' neste repo. Foque em bugs de corretude, segurança e dados pessoais (LGPD); ignore estilo. Para cada achado: arquivo:linha, o problema, cenário concreto que quebra." \
+   claude -p "Review the diff from 'git diff HEAD' in this repo. Focus on correctness bugs, security and personal data (LGPD); ignore style. For each finding: file:line, the problem, a concrete scenario that breaks." \
      --allowedTools "Bash(git diff*)" "Bash(git log*)" "Read" "Grep" "Glob" \
      --permission-mode dontAsk
    ```
-3. Confira cada apontamento no código antes de aceitar; descarte falsos positivos.
-4. Responda ao Daniel com uma tabela curta: apontamento → real/falso positivo → o que fazer.
-   Só aplique correções se ele pedir.
+3. Check every finding in the code before accepting it; drop false positives.
+4. Answer Daniel with a short table: finding → real/false positive → what to do.
+   Only apply fixes if he asks.

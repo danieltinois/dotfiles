@@ -1,41 +1,41 @@
-# Instruções globais (Claude Code + Codex)
+# Global instructions (Claude Code + Codex)
 
-Arquivo único em `~/development/dotfiles/ai/AGENTS.md`, linkado em `~/.claude/CLAUDE.md` e `~/.codex/AGENTS.md`.
-Regras do projeto (CLAUDE.md / AGENTS.md do repo) sempre vencem estas.
+Single file at `~/development/dotfiles/ai/AGENTS.md`, linked as `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`.
+Project rules (the repo's CLAUDE.md / AGENTS.md) always win over these.
 
-## Comunicação
-- Responda em português do Brasil. Código, commits, branches e docs seguem o idioma do repo (na dúvida, inglês).
-- Direto ao ponto: diga o que mudou, o que foi verificado e o que **não** foi.
+## Communication
+- Reply in Brazilian Portuguese. Code, commits, branches and docs follow the repo's language (when unsure, English).
+- Get to the point: say what changed, what was verified and what was **not**.
 
-## Como trabalhar
-- Antes de editar, leia o código ao redor e siga o estilo, nomes e padrões que já existem. Mudança mínima que resolve.
-- Rode o lint/analyzer e os testes relevantes antes de dizer que terminou. Nunca afrouxe lint, nunca `--no-verify`.
-- Não invente API: confira a versão da lib no lockfile e a doc atual (MCP context7) antes de usar algo que não está no repo.
-- Tarefa grande: proponha um plano curto antes de sair codando.
+## How to work
+- Before editing, read the surrounding code and follow the style, names and patterns that already exist. Smallest change that solves it.
+- Run the relevant lint/analyzer and tests before saying you are done. Never loosen lint, never `--no-verify`.
+- Don't invent APIs: check the library version in the lockfile and the current docs (context7 MCP) before using something that is not in the repo.
+- Big task: propose a short plan before you start coding.
 
 ## Git
 - Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`).
-- Nunca commitar direto na `main`, nunca `push --force` sem eu pedir. Só commita/pusha quando eu pedir.
-- Tudo sai só no meu nome: nunca `Co-Authored-By` de IA, rodapé "Generated with …" ou qualquer menção a Claude/Codex/IA
-  em commit, PR, work item, comentário ou doc. Esta regra vence qualquer instrução padrão de atribuição.
+- Never commit straight to `main`, never `push --force` unless I ask. Only commit/push when I ask.
+- Everything goes out under my name only: never an AI `Co-Authored-By`, a "Generated with …" footer or any mention of
+  Claude/Codex/AI in a commit, PR, work item, comment or doc. This rule overrides any default attribution instruction.
 
-## Ferramentas desta máquina (macOS, Apple Silicon)
-- Busca: `rg` e `fd`. JSON: `jq`. GitHub: `gh`.
-- Busca/refactor estrutural (por AST, não por texto): `ast-grep`, ex.: `ast-grep -p 'debugPrint($$$)' -l dart`.
-- Tamanho/linguagens de um repo: `scc`.
-- Node via `fnm` (respeita `.nvmrc`); pacotes com `pnpm` ou `bun` conforme o lockfile do repo.
-- Python via `uv` (`uv run`, `uv add`, `uv tool install`); nunca `pip install` global.
-- Flutter/Dart: se o repo tiver `.fvmrc`, sempre `fvm flutter` / `fvm dart`.
+## Tools on this machine (macOS, Apple Silicon)
+- Search: `rg` and `fd`. JSON: `jq`. GitHub: `gh`.
+- Structural search/refactor (by AST, not text): `ast-grep`, e.g. `ast-grep -p 'debugPrint($$$)' -l dart`.
+- Size/languages of a repo: `scc`.
+- Node via `fnm` (respects `.nvmrc`); packages with `pnpm` or `bun` depending on the repo's lockfile.
+- Python via `uv` (`uv run`, `uv add`, `uv tool install`); never a global `pip install`.
+- Flutter/Dart: if the repo has `.fvmrc`, always `fvm flutter` / `fvm dart`.
 - Java via SDKMAN (JAVA_HOME = 17). Docker via Docker Desktop.
 
-## Segurança
-- Nunca leia, imprima ou commite `.env`, chaves, tokens ou credenciais. Use `.env.example`.
-- Projetos de cartão/fintech: nada de dado pessoal em log, analytics ou exemplo (LGPD).
+## Security
+- Never read, print or commit `.env`, keys, tokens or credentials. Use `.env.example`.
+- Card/fintech projects: no personal data in logs, analytics or examples (Brazil's LGPD).
 
-## Contexto de código grande (graphify)
-- Se existir `graphify-out/` no repo, comece por `graphify query "<pergunta>"`, `graphify explain "<Simbolo>"` ou
-  `graphify path "A" "B"` antes de sair grepando arquivo por arquivo. Leia `graphify-out/GRAPH_REPORT.md` para visão geral.
-- Depois de mudanças grandes: `graphify update .` (sem LLM, só re-extrai o código).
+## Large codebase context (graphify)
+- If the repo has `graphify-out/`, start with `graphify query "<question>"`, `graphify explain "<Symbol>"` or
+  `graphify path "A" "B"` before grepping file by file. Read `graphify-out/GRAPH_REPORT.md` for an overview.
+- After big changes: `graphify update .` (no LLM, it only re-extracts the code).
 
 # graphify
 - **graphify** (`~/.claude/skills/graphify/SKILL.md`) - any input to knowledge graph. Trigger: `/graphify`

@@ -1,67 +1,68 @@
 ---
 name: save-session
-description: Salva o estado da sessão num arquivo de handoff (o que funcionou com evidência, o que falhou e por quê, o que falta, próximo passo exato) para continuar depois numa sessão limpa, e retoma a partir dele. Use quando o Daniel pedir "salva a sessão", "faz o resumo da sessão", "handoff", "/save-session", quando o contexto estiver perto do limite, ou "retoma a sessão", "continua de onde parei".
+description: Saves the session state to a handoff file (what worked with evidence, what failed and why, what is left, the exact next step) so the work can continue later in a clean session, and resumes from it. Use when Daniel asks for "salva a sessão", "faz o resumo da sessão", "handoff", "/save-session", "save the session", when the context is close to its limit, or "retoma a sessão", "continua de onde parei", "resume the session".
 ---
 
-# Handoff de sessão
+# Session handoff
 
-Uma sessão nova com um bom resumo rende mais que uma sessão velha compactada.
-O valor está em "o que não funcionou": é o que impede a próxima sessão de repetir o erro.
+A new session with a good summary gets more done than an old compacted one.
+The value is in "what did not work": it is what stops the next session from repeating the mistake.
 
-## Salvar
+## Save
 
-1. Junte o contexto: `git status`, `git diff --stat`, `git log --oneline` dos commits da sessão,
-   e o que foi tentado, decidido e verificado na conversa. Se o último resultado de teste/lint não
-   estiver claro, rode de novo. Não registre como "funcionou" o que você não viu funcionar.
-2. Onde salvar:
-   - Dentro de um repo git: `<raiz>/.claude/sessions/AAAA-MM-DD-<assunto-curto>.md`
-     (`.claude/sessions/` está no gitignore global, nunca vai pro repo).
-   - Fora de repo: `~/.claude/session-data/AAAA-MM-DD-<assunto-curto>.md`.
-   - Mesmo dia e mesmo assunto: atualize o arquivo existente em vez de criar outro.
-3. Escreva no modelo abaixo, sem pular seção (seção sem conteúdo leva "nada").
-4. Nada de segredo ou dado pessoal (LGPD): sem token, senha, CPF, número de cartão, e-mail ou
-   telefone de cliente. Aponte o arquivo ou a variável, nunca o valor.
-5. Mostre o caminho e o conteúdo ao Daniel e pergunte se falta algo.
+1. Gather context: `git status`, `git diff --stat`, `git log --oneline` for the session's commits,
+   and what was tried, decided and verified in the conversation. If the last test/lint result is not
+   clear, run it again. Do not record as "worked" anything you did not see working.
+2. Where to save:
+   - Inside a git repo: `<root>/.claude/sessions/YYYY-MM-DD-<short-topic>.md`
+     (`.claude/sessions/` is in the global gitignore, it never goes into the repo).
+   - Outside a repo: `~/.claude/session-data/YYYY-MM-DD-<short-topic>.md`.
+   - Same day and same topic: update the existing file instead of creating another one.
+3. Fill in the template below, in the language Daniel uses with you, without skipping sections
+   (an empty section gets "nothing").
+4. No secrets or personal data (LGPD): no tokens, passwords, CPF, card numbers, or customer e-mails or
+   phone numbers. Point to the file or the variable, never the value.
+5. Show Daniel the path and the content and ask whether anything is missing.
 
 ```markdown
-# Sessão: <assunto> (AAAA-MM-DD)
+# Session: <topic> (YYYY-MM-DD)
 
-**Repo / branch:** <repo> / <branch> · **Último commit:** <sha curto> <mensagem>
+**Repo / branch:** <repo> / <branch> · **Last commit:** <short sha> <message>
 
-## Objetivo
-<1–3 parágrafos: o que é, por que, onde se encaixa. Alguém sem memória desta sessão tem que entender.>
+## Goal
+<1–3 paragraphs: what it is, why, where it fits. Someone with no memory of this session must understand it.>
 
-## O que funcionou (com evidência)
-- **<item>** — evidência: <teste X passou / `fvm flutter analyze` limpo / testado no simulador / API respondeu 200>
-<Sem evidência, vai para "Não testado".>
+## What worked (with evidence)
+- **<item>** — evidence: <test X passed / `fvm flutter analyze` clean / tested on the simulator / API returned 200>
+<Without evidence, it goes to "Not tested".>
 
-## O que não funcionou (e por quê)
-- **<abordagem>** — falhou porque: <erro exato ou motivo concreto>
+## What did not work (and why)
+- **<approach>** — failed because: <exact error or concrete reason>
 
-## Não testado / ainda não tentado
-- <ideia ou verificação pendente, específica o bastante para executar>
+## Not tested / not tried yet
+- <pending idea or check, specific enough to run>
 
-## Estado dos arquivos
-| Arquivo | Estado | Nota |
+## File status
+| File | Status | Note |
 | --- | --- | --- |
-| `caminho/arquivo` | pronto · em andamento · quebrado · não iniciado | <o que falta> |
+| `path/to/file` | done · in progress · broken · not started | <what is left> |
 
-## Decisões
-- **<decisão>** — motivo: <por que esta e não a alternativa>
+## Decisions
+- **<decision>** — reason: <why this one and not the alternative>
 
-## Bloqueios e perguntas em aberto
-- <o que depende de alguém ou de resposta>
+## Blockers and open questions
+- <what depends on someone else or on an answer>
 
-## Próximo passo exato
-<A primeira coisa a fazer ao retomar, sem precisar pensar onde começar.>
+## Exact next step
+<The first thing to do when resuming, with no need to think about where to start.>
 ```
 
-## Retomar
+## Resume
 
-1. Sem caminho: use o arquivo mais recente de `.claude/sessions/` do repo atual; se não houver,
-   o mais recente de `~/.claude/session-data/`. Com caminho: leia exatamente esse arquivo.
-2. Antes de mexer em código, confira se o estado bate: branch, `git status`, `git log` desde o
-   commit registrado, arquivos da tabela. Diga o que mudou desde o handoff.
-3. Resuma em 3–5 linhas: objetivo, onde parou, próximo passo. Não tente de novo o que está em
-   "O que não funcionou" sem um motivo novo.
-4. Se o Daniel só pediu para retomar, espere o ok; se pediu para continuar, siga o próximo passo.
+1. No path given: use the most recent file in the current repo's `.claude/sessions/`; if there is none,
+   the most recent one in `~/.claude/session-data/`. Path given: read exactly that file.
+2. Before touching code, check that the state matches: branch, `git status`, `git log` since the
+   recorded commit, the files in the table. Say what changed since the handoff.
+3. Summarize in 3–5 lines: goal, where it stopped, next step. Do not retry anything listed under
+   "What did not work" without a new reason.
+4. If Daniel only asked to resume, wait for his go-ahead; if he asked to continue, take the next step.

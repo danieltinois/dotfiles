@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# Status line do Claude Code (2 linhas)
-#  1: modelo · pasta · branch (* = alterações) · ◆ se o repo tem grafo do graphify
-#  2: barra de contexto · limite de 5h · linhas +/−
+# Claude Code status line (2 lines)
+#  1: model · folder · branch (* = changes, ? = not checked) · ◆ if the repo has a graphify graph
+#  2: context bar · 5h limit · lines +/−
 input=$(cat)
 j() { jq -r "$1" <<<"$input"; }
 R=$'\e[0m' DIM=$'\e[2m' CYAN=$'\e[36m' MAG=$'\e[35m' GRN=$'\e[32m' YEL=$'\e[33m' RED=$'\e[31m'
 
-# Repo de terceiros não executa nada daqui: sem fsmonitor do .git/config, sem lock no índice, sem submódulos.
+# A third-party repo runs nothing from here: no fsmonitor from .git/config, no index lock, no submodules.
 g() { git --no-optional-locks -c core.fsmonitor=false -C "$dir" "$@" 2>/dev/null; }
-# `git status` roda filtros clean/smudge. Filtro definido pelo próprio repo (não pelo seu global/system) = não confia.
+# `git status` runs clean/smudge filters. A filter defined by the repo itself (not your global/system config) = don't trust.
 repo_filters() { g config --show-scope --includes --get-regexp '^filter\.' | grep -qvE '^(global|system)[[:space:]]'; }
-# Nome de pasta/branch pode trazer sequência de escape de terminal.
+# Folder/branch names can carry terminal escape sequences.
 clean() { tr -d '[:cntrl:]' <<<"$1"; }
 
 model=$(clean "$(j '.model.display_name // "?"')")

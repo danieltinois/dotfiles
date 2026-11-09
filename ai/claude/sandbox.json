@@ -4,30 +4,28 @@
     "autoAllowBashIfSandboxed": false,
     "excludedCommands": [
       "docker *",
-      "gh *",
-      "open *"
+      "gh *"
     ],
     "filesystem": {
       "allowWrite": [
-        "~/.pub-cache/hosted",
-        "~/.pub-cache/hosted-hashes",
-        "~/.pub-cache/git",
-        "~/.pub-cache/_temp",
-        "~/.npm/_cacache",
-        "~/Library/pnpm/store",
-        "~/.bun/install/cache",
-        "~/.gradle/caches",
-        "~/.gradle/daemon",
-        "~/.gradle/native",
-        "~/.gradle/.tmp",
-        "~/Library/Developer/Xcode/DerivedData"
+        "~/.npm/_cacache"
       ],
       "denyRead": [
         "~/.ssh",
         "~/.aws",
         "~/.gnupg",
         "~/.codex/auth.json",
-        "~/.config/gh/hosts.yml"
+        "~/.config/gh/hosts.yml",
+        "~/.docker",
+        "~/.kube",
+        "~/.azure",
+        "~/.config/gcloud",
+        "~/.npmrc",
+        "~/.netrc",
+        "~/.git-credentials",
+        "~/.gradle/gradle.properties",
+        "~/.pub-cache/credentials.json",
+        "~/Library/Application Support/dart/pub-credentials.json"
       ]
     },
     "network": {
@@ -40,10 +38,6 @@
         "registry.yarnpkg.com",
         "pypi.org",
         "files.pythonhosted.org",
-        "pub.dev",
-        "*.pub.dev",
-        "storage.googleapis.com",
-        "*.flutter.dev",
         "dev.azure.com",
         "*.dev.azure.com",
         "*.visualstudio.com"

@@ -1,44 +1,44 @@
-# Instale/atualize tudo com: brew bundle --file ~/development/dotfiles/Brewfile
+# Install/update everything with: brew bundle --file ~/development/dotfiles/Brewfile
 
-# --- Linguagens / runtimes ---
-brew "fnm"          # versões do Node (lê .nvmrc / .node-version)
+# --- Languages / runtimes ---
+brew "fnm"          # Node versions (reads .nvmrc / .node-version)
 brew "pnpm"
 brew "bun"
-brew "uv"           # Python: versões, venvs e pacotes
+brew "uv"           # Python: versions, venvs and packages
 
-# --- CLIs modernas ---
-brew "eza"          # ls melhor
-brew "bat"          # cat com cores
-brew "fzf"          # busca fuzzy (Ctrl+R, Ctrl+T)
-brew "zoxide"       # cd inteligente (z nome)
+# --- Modern CLIs ---
+brew "eza"          # a better ls
+brew "bat"          # cat with colors
+brew "fzf"          # fuzzy search (Ctrl+R, Ctrl+T)
+brew "zoxide"       # smart cd (z name)
 brew "lazygit"
 brew "gh"           # GitHub CLI
-brew "git-delta"    # diffs bonitos
+brew "git-delta"    # nicer diffs
 brew "jq"
-brew "tlrc"         # tldr: exemplos rápidos de comandos
-brew "btop"         # monitor de sistema
+brew "tlrc"         # tldr: quick command examples
+brew "btop"         # system monitor
 brew "fd"
 brew "wget"
-brew "bash"         # Bash moderno (exigido pelo SDKMAN)
-brew "lefthook"     # git hooks por projeto (lint/format antes do commit)
+brew "bash"         # modern Bash (required by SDKMAN)
+brew "lefthook"     # per-project git hooks (lint/format before commit)
 
 # --- Apps ---
-# cask "docker-desktop"  # já instalado fora do brew (adotar falha por permissão do macOS); descomente numa máquina nova
+# cask "docker-desktop"  # already installed outside brew (adopting fails on a macOS permission); uncomment on a new machine
 cask "raycast"
 cask "ghostty"
 cask "google-chrome"
-cask "bruno"        # cliente de API (coleções versionáveis no git)
-cask "jetbrains-toolbox"  # instala/atualiza IntelliJ e outras IDEs
+cask "bruno"        # API client (collections versioned in git)
+cask "jetbrains-toolbox"  # installs/updates IntelliJ and other IDEs
 cask "font-jetbrains-mono-nerd-font"
-cask "proxyman"     # inspeciona HTTP do simulador/celular
-cask "xcodes-app"   # instala e alterna versões do Xcode
+cask "proxyman"     # inspects HTTP from the simulator/phone
+cask "xcodes-app"   # installs and switches Xcode versions
 
-# --- IA / agentes ---
-brew "ast-grep"     # busca e refactor estrutural
-brew "scc"          # contagem de código por linguagem
-brew "typescript-language-server"  # LSP usado pelo plugin typescript-lsp do Claude Code
-brew "pyright"      # LSP usado pelo plugin pyright-lsp
-# cask "wispr-flow"  # ditado por voz pra prompts (pago; descomente se quiser)
-# Fora do brew:
+# --- AI / agents ---
+brew "ast-grep"     # structural search and refactor
+brew "scc"          # code count by language
+brew "typescript-language-server"  # LSP used by Claude Code's typescript-lsp plugin
+brew "pyright"      # LSP used by the pyright-lsp plugin
+# cask "wispr-flow"  # voice dictation for prompts (paid; uncomment if you want it)
+# Outside brew:
 # uv tool install "graphifyy[mcp]" && graphify install --platform claude && graphify install --platform codex
-# Instruções globais dos agentes: ~/development/dotfiles/ai/AGENTS.md (symlink em ~/.claude/CLAUDE.md e ~/.codex/AGENTS.md)
+# Global agent instructions: ~/development/dotfiles/ai/AGENTS.md (symlinked as ~/.claude/CLAUDE.md and ~/.codex/AGENTS.md)
