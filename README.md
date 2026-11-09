@@ -1,0 +1,40 @@
+# dotfiles
+
+Setup de dev do Daniel (macOS, Apple Silicon).
+
+| Arquivo | O que é | Onde é linkado |
+| --- | --- | --- |
+| `Brewfile` | CLIs e apps | `brew bundle --file ~/development/dotfiles/Brewfile` |
+| `macos.sh` | Preferências do macOS (Dock, Finder, teclado) | rodar com `bash macos.sh` |
+| `ghostty.config` | Terminal | `~/.config/ghostty/config` |
+| `ai/AGENTS.md` | Regras globais dos agentes | `~/.claude/CLAUDE.md` e `~/.codex/AGENTS.md` |
+| `ai/claude/scripts/` | Hooks e statusline do Claude Code | `~/.claude/scripts` |
+| `ai/skills/codex-review` | Claude pede review ao Codex | `~/.claude/skills/codex-review` |
+| `ai/skills/claude-review` | Codex pede review ao Claude | `~/.codex/skills/claude-review` |
+| `ai/skills/save-session` | Handoff de sessão (salvar e retomar) | `~/.claude/skills/save-session` e `~/.codex/skills/save-session` |
+
+## Hooks do Claude Code (`~/.claude/settings.json`)
+
+- `guard.sh` (PreToolUse, Bash/Read/Edit/Write/MultiEdit/NotebookEdit): bloqueia ler `.env`/chaves,
+  `push --force`, `--no-verify`, atribuição de IA em commit/PR, `rm -rf` na raiz/home e alterar
+  config de lint/format/git hooks que já existe (`analysis_options.yaml`, eslint, prettier, biome,
+  lefthook, husky, ruff…). Criar uma config nova pode; mudar regra de lint, só o Daniel na mão.
+- `format-on-edit.sh` (PostToolUse): formata o arquivo editado com o formatter do projeto.
+
+## Máquina nova
+
+```bash
+brew bundle --file ~/development/dotfiles/Brewfile
+bash ~/development/dotfiles/macos.sh
+D=~/development/dotfiles
+ln -sfn $D/ai/AGENTS.md ~/.claude/CLAUDE.md
+ln -sfn $D/ai/AGENTS.md ~/.codex/AGENTS.md
+ln -sfn $D/ai/claude/scripts ~/.claude/scripts
+ln -sfn $D/ai/skills/codex-review ~/.claude/skills/codex-review
+ln -sfn $D/ai/skills/claude-review ~/.codex/skills/claude-review
+ln -sfn $D/ai/skills/save-session ~/.claude/skills/save-session
+ln -sfn $D/ai/skills/save-session ~/.codex/skills/save-session
+ln -sfn $D/ghostty.config ~/.config/ghostty/config
+```
+
+O `~/.claude/settings.json` não é linkado porque o próprio Claude Code reescreve esse arquivo.
