@@ -10,7 +10,7 @@ Guide and docs page, in English and Brazilian Portuguese: https://danieltinois.g
 | `Brewfile` | CLIs and apps | `brew bundle --file ~/development/dotfiles/Brewfile` |
 | `macos.sh` | macOS preferences (Dock, Finder, keyboard) | run with `bash macos.sh` |
 | `ghostty.config` | Terminal | `~/.config/ghostty/config` |
-| `aerospace.toml` | Tiling window manager (also starts JankyBorders); modifier is ctrl+alt | `~/.config/aerospace/aerospace.toml` |
+| `aerospace.toml` | Tiling window manager: one workspace per kind of app, full-screen stacked windows; modifier is ctrl+alt | `~/.config/aerospace/aerospace.toml` |
 | `ai/AGENTS.md` | Global rules for the agents | `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md` |
 | `ai/claude/scripts/` | Claude Code hooks and status line | `~/.claude/scripts` |
 | `ai/claude/sandbox.json` | Claude Code sandbox config | copy into `~/.claude/settings.json` |

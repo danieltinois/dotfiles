@@ -2,20 +2,19 @@
 # Docs: https://nikitabobko.github.io/AeroSpace/guide
 # Modifier is ctrl+alt (not plain alt) so it does not steal alt+b/alt+f from zsh in Ghostty
 # (macos-option-as-alt = true) or the option key from accented characters.
+#
+# Each app goes to its own workspace (see on-window-detected) and every window uses the whole
+# screen: the default layout is accordion (windows stacked, one visible at a time) with no gaps.
+# ctrl+alt+/ splits the current workspace side by side when you want two windows at once.
 config-version = 2
 
 start-at-login = true
 auto-reload-config = true
 
-# Colored border on the focused window (JankyBorders). Blue = Ghostty's palette 4.
-after-startup-command = [
-  'exec-and-forget borders active_color=0xff569cd6 inactive_color=0xff3c3c3c width=5.0 style=round hidpi=on',
-]
-
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
-accordion-padding = 30
-default-root-container-layout = 'tiles'
+accordion-padding = 0
+default-root-container-layout = 'accordion'
 default-root-container-orientation = 'auto'
 automatically-unhide-macos-hidden-apps = false
 
@@ -25,17 +24,77 @@ key-mapping.preset = 'qwerty'
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 
 [gaps]
-  inner.horizontal = 10
-  inner.vertical = 10
-  outer.left = 10
-  outer.bottom = 10
-  outer.top = 10
-  outer.right = 10
+  inner.horizontal = 0
+  inner.vertical = 0
+  outer.left = 0
+  outer.bottom = 0
+  outer.top = 0
+  outer.right = 0
+
+# 1 terminal/AI · 2 code · 3 browser · 4 chat/mail · 5 notes · 6 other
+# Bundle ids: aerospace list-apps
+[[on-window-detected]]
+  if = 'test %{app-bundle-id} = com.apple.systempreferences'
+  run = 'layout floating'
+[[on-window-detected]]
+  if = 'test %{app-bundle-id} = com.apple.finder'
+  run = 'layout floating'
+
+[[on-window-detected]]
+  if = 'test %{app-bundle-id} = com.mitchellh.ghostty'
+  run = 'move-node-to-workspace 1'
+[[on-window-detected]]
+  if = 'test %{app-bundle-id} = com.anthropic.claudefordesktop'
+  run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+  if = 'test %{app-bundle-id} = com.microsoft.VSCode'
+  run = 'move-node-to-workspace 2'
+[[on-window-detected]]
+  if = 'test %{app-bundle-id} = com.google.android.studio'
+  run = 'move-node-to-workspace 2'
+[[on-window-detected]]
+  if = 'test %{app-bundle-id} = com.apple.dt.Xcode'
+  run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+  if = 'test %{app-bundle-id} = com.apple.Safari'
+  run = 'move-node-to-workspace 3'
+[[on-window-detected]]
+  if = 'test %{app-bundle-id} = com.google.Chrome'
+  run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+  if = 'test %{app-bundle-id} = com.tinyspeck.slackmacgap'
+  run = 'move-node-to-workspace 4'
+[[on-window-detected]]
+  if = 'test %{app-bundle-id} = net.whatsapp.WhatsApp'
+  run = 'move-node-to-workspace 4'
+[[on-window-detected]]
+  if = 'test %{app-bundle-id} = com.gather.GatherV2'
+  run = 'move-node-to-workspace 4'
+[[on-window-detected]]
+  if = 'test %{app-bundle-id} = com.apple.mail'
+  run = 'move-node-to-workspace 4'
+
+[[on-window-detected]]
+  if = 'test %{app-bundle-id} = md.obsidian'
+  run = 'move-node-to-workspace 5'
+[[on-window-detected]]
+  if = 'test %{app-bundle-id} = com.apple.Notes'
+  run = 'move-node-to-workspace 5'
+
+[[on-window-detected]]
+  if = 'test %{app-bundle-id} = com.electron.dockerdesktop'
+  run = 'move-node-to-workspace 6'
+[[on-window-detected]]
+  if = 'test %{app-bundle-id} = com.apple.Music'
+  run = 'move-node-to-workspace 6'
 
 [mode.main.binding]
   ctrl-alt-enter = 'exec-and-forget open -na Ghostty'
 
-  # Focus and move (vim keys)
+  # Focus and move (vim keys). In accordion, h/l (or j/k) cycle through the stacked windows.
   ctrl-alt-h = 'focus left'
   ctrl-alt-j = 'focus down'
   ctrl-alt-k = 'focus up'
@@ -46,8 +105,8 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
   ctrl-alt-shift-l = 'move right'
 
   # Layout
-  ctrl-alt-slash = 'layout tiles horizontal vertical'
-  ctrl-alt-comma = 'layout accordion horizontal vertical'
+  ctrl-alt-slash = 'layout tiles horizontal vertical'      # side by side
+  ctrl-alt-comma = 'layout accordion horizontal vertical'  # back to full screen stack
   ctrl-alt-f = 'fullscreen'
   ctrl-alt-space = 'layout floating tiling'
   ctrl-alt-minus = 'resize smart -50'
