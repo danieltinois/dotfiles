@@ -12,14 +12,19 @@ defaults write com.apple.dock magnification -bool false
 defaults write com.apple.dock show-recents -bool false
 defaults write com.apple.dock minimize-to-application -bool true
 defaults write com.apple.dock mru-spaces -bool false          # don't reorder Spaces automatically
-defaults write com.apple.dock expose-group-apps -bool true    # Mission Control grouped by app
+defaults write com.apple.dock expose-group-apps -bool true    # Mission Control grouped by app (AeroSpace recommends it)
+defaults write com.apple.dock launchanim -bool true           # bounce/zoom when an app opens
 # Dock with open apps only (Raycast becomes the launcher). Uncomment if you like it:
 # defaults write com.apple.dock static-only -bool true
 
-# --- Desktop: clean ---
-defaults write com.apple.finder CreateDesktop -bool false     # no icons on the desktop
+# --- Desktop: files and widgets visible, Stage Manager and native tiling off (AeroSpace tiles) ---
+defaults write com.apple.finder CreateDesktop -bool true          # files and folders on the desktop
+defaults write com.apple.WindowManager HideDesktop -bool false    # "Show items: on Desktop"
+defaults write com.apple.WindowManager StandardHideWidgets -bool false   # widgets on the desktop
 defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -bool false
-defaults write com.apple.WindowManager GloballyEnabled -bool false   # Stage Manager off
+defaults write com.apple.WindowManager GloballyEnabled -bool false       # Stage Manager off
+defaults write com.apple.WindowManager EnableTilingByEdgeDrag -bool false    # native tiling would fight AeroSpace
+defaults write com.apple.WindowManager EnableTopTilingByEdgeDrag -bool false
 
 # --- Menu bar ---
 # Hide the whole menu bar until you hover over it. Uncomment if you like it:
@@ -42,8 +47,9 @@ defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true       #
 defaults write NSGlobalDomain AppleInterfaceStyle -string Dark
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 defaults write NSGlobalDomain AppleShowScrollBars -string WhenScrolling
-defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
-defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
+# Window animations on (open/close and resize). An older version of this script turned them off.
+defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool true
+defaults delete NSGlobalDomain NSWindowResizeTime 2>/dev/null || true
 
 # --- Programmer keyboard (no autocorrect, fast key repeat) ---
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
@@ -60,5 +66,5 @@ defaults write com.apple.screencapture location -string "$HOME/Screenshots"
 defaults write com.apple.screencapture type -string png
 defaults write com.apple.screencapture disable-shadow -bool true
 
-killall Dock Finder SystemUIServer 2>/dev/null || true
+killall Dock Finder SystemUIServer WindowManager 2>/dev/null || true
 echo "Done. Some changes (keyboard, menu bar) only fully apply after logging out and back in."
