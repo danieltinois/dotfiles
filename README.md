@@ -36,7 +36,7 @@ Guide and docs page, in English and Brazilian Portuguese: https://danieltinois.g
   `~/development`). A repo cloned just to look at stays outside and nothing from it runs.
 - `project-panel.sh` (SessionStart, matcher `startup|resume|clear|compact`, timeout 5 s): finds the vault note
   (`10 Projetos/**/*.md` with `tipo: projeto`) whose `pastas` is the longest prefix of the session folder and
-  injects its state (next action, open items, recent log) as context, capped at `PANEL_MAX_CHARS` (default 4000).
+  injects its state (next action, open items, the last block of the newest day note `Dias/YYYY-MM-DD - <panel>.md` next to the panel, or the panel's Log when there is none) as context, capped at `PANEL_MAX_CHARS` (default 4000).
   With no panel it asks the session to offer creating one, only inside `PANEL_ROOTS` and outside the folders
   listed in `PANEL_IGNORE_FILE`. Paths come from three environment variables: `CEREBRO_VAULT` (default
   `~/Obsidian/Cerebro`), `PANEL_ROOTS` (colon-separated, default `~/development`) and `PANEL_IGNORE_FILE`

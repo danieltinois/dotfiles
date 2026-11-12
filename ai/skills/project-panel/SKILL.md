@@ -6,7 +6,7 @@ description: Creates and updates a project panel (a note with `tipo: projeto`) i
 # Project panel
 
 A panel is one vault note per project (or per front of a project) holding the current state: what is happening now,
-the next action, open items and a short log. The SessionStart hook (`ai/claude/scripts/project-panel.sh`) loads it into
+the next action and open items. The work history lives in one note per day. The SessionStart hook (`ai/claude/scripts/project-panel.sh`) loads it into
 the session. This skill creates it and keeps it current.
 
 ## Before writing
@@ -29,10 +29,33 @@ Frontmatter follows the template `99 Sistema/Templates/Projeto.md`, plus:
 | `proxima_acao` | One line: the next concrete step |
 | `pai` | `"[[Main note]]"`, only on a front (see below) |
 
+### Day note
+
+One note per day per panel, in a `Dias/` folder next to the panel (created with the first day note):
+`<panel folder>/Dias/YYYY-MM-DD - <panel basename>.md`, e.g. `10 Projetos/X/Front A.md` ->
+`10 Projetos/X/Dias/2026-11-12 - Front A.md`.
+
+```
+---
+tipo: dia
+data: YYYY-MM-DD
+painel: "[[<panel basename>]]"
+tags: [dia]
+---
+# <panel basename> — YYYY-MM-DD
+
+## HH:MM · <short topic>
+- what changed
+- Conferido: what was verified
+- Falta: what is left
+```
+
+One `## HH:MM · <topic>` block per work session, newest last.
+
 ## Session starts with a panel
 
 The context shows `Project panel (Obsidian vault): <vault-relative note path>` with `Status`, `Branch`, `Next action`,
-`Now`, `Open items` and `Recent log` (plus `Parent panel` and `Parent now` on a front). Work from it. Read the full
+`Now`, `Open items` and `Last day (<day note path>)` (the last block of the newest day note; `Recent log` instead when the panel has no day note yet) (plus `Parent panel` and `Parent now` on a front). Work from it. Read the full
 note only when you need more than the injected summary.
 
 ## Session starts with no panel
@@ -54,7 +77,7 @@ The context says `No project panel in the Obsidian vault for <toplevel>.` Offer 
    - Callout `> [!brain] Agora`: two or three lines on where things stand.
    - A commands table (build, test, lint, run), only if it is a repo. Take the commands from the repo's own docs.
    - `## Próximas ações`: `- [ ]` items, the first one matching `proxima_acao`.
-   - `## Log`: starts empty or with one `- YYYY-MM-DD — criado` style line.
+   - `## Dias`: contains only `![[Dias.base]]` (a vault base listing the panel's day notes). No `## Log`.
    - `## Recursos e links`.
 4. **Second front:** the first note becomes the hub. Patch it to add a callout `> [!brain] Hoje, na ordem` (the fronts
    in the order to work on them) and the embed `![[Frentes.base]]` (base: `99 Sistema/Bases/Frentes.base`).
@@ -67,10 +90,12 @@ When: a piece of work that changed code, a card, a PR or a decision is done. Not
 
 Patch only, one change at a time:
 
-1. Front (or standalone panel): tick finished items `- [x]`, add new ones, set `proxima_acao`, rewrite the `Agora`
-   callout, and add one line `- YYYY-MM-DD — what happened and why it matters` at the end of `## Log`.
-2. Hub: if the order or the state of the fronts changed, patch `Hoje, na ordem`.
-3. Say in one line what changed in the panel.
+1. Work log: append a `## HH:MM · <topic>` block to today's day note (see **Day note**). Create the note, and the
+   `Dias/` folder, from the format above if missing. Never rewrite earlier blocks.
+2. Front (or standalone panel): tick finished items `- [x]`, add new ones, set `proxima_acao` and rewrite the `Agora`
+   callout. Do not add lines to the panel's Log: a panel that still has `## Log` keeps it read-only until it is migrated.
+3. Hub: if the order or the state of the fronts changed, patch `Hoje, na ordem`.
+4. Say in one line what changed in the panel.
 
 ## Never
 

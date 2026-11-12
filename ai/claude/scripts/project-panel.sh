@@ -14,7 +14,7 @@ IGNORE=${PANEL_IGNORE_FILE:-$HOME/.config/claude-hooks/panel-ignore}
 MAX=${PANEL_MAX_CHARS:-4000}
 case $MAX in '' | *[!0-9]*) MAX=4000 ;; esac
 DIR="$VAULT/10 Projetos"
-RULE='Rule: this session starts from the panel above. When a piece of work that changed code, a card, a PR or a decision is done, update the panel with the project-panel skill (patch only: tick the checklist, set proxima_acao, add one dated Log line). Questions and short chats do not touch it.'
+RULE='Rule: this session starts from the panel above. When a piece of work that changed code, a card, a PR or a decision is done, update it with the project-panel skill: add a block to today'"'"'s day note (Dias/YYYY-MM-DD - <panel name>.md next to the panel) and patch the panel (tick the checklist, set proxima_acao). Questions and short chats do not touch it.'
 BEST=""
 TIE=""
 CACHE=""
@@ -100,6 +100,37 @@ recent_log() { # last 3 "- " lines of "## Log"
     inlog && /^- / { buf[++n] = $0 }
     END { for (i = (n > 3 ? n - 2 : 1); i <= n; i++) print buf[i] }'
 }
+day_note() { # panel -> path of its newest day note (<panel dir>/Dias/YYYY-MM-DD - <panel basename>.md), or nothing
+  local f=$1 dir base d name suffix stamp best
+  dir=$(dirname "$f")
+  base=$(basename "$f" .md)
+  d="$dir/Dias"
+  [ -d "$d" ] || return 0
+  suffix=" - $base.md"
+  best=$(
+    for name in "$d"/*; do
+      [ -f "$name" ] || continue
+      name=${name##*/}
+      [[ $name == *"$suffix" ]] || continue
+      stamp=${name%"$suffix"}
+      [[ $stamp =~ ^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$ ]] || continue
+      printf '%s\n' "$stamp"
+    done | LC_ALL=C sort | tail -n 1
+  )
+  [ -n "$best" ] && printf '%s' "$d/$best$suffix"
+  return 0
+}
+last_block() { # day note -> its last "## " block (heading and following lines), at most 15 lines, trailing blanks dropped
+  body "$1" | awk '
+    /^[ \t]*```/ { fence = !fence }
+    !fence && /^## / { n = 0 }
+    { buf[++n] = $0 }
+    END {
+      while (n > 0 && buf[n] ~ /^[ \t\r]*$/) n--
+      if (n > 15) n = 15
+      for (i = 1; i <= n; i++) print buf[i]
+    }'
+}
 parent_note() { # file -> absolute path of the note `pai: "[[Name]]"` points to (first in path order), or nothing
   local pai name first
   pai=$(fm_field "$1" pai)
@@ -146,7 +177,7 @@ section() { # title content -> blank line, title, content (nothing when content 
   return 0
 }
 render() { # note -> context text for BEST/TIE
-  local f=$1 st br na line="" pf t head
+  local f=$1 st br na line="" pf t head dn
   st=$(fm_field "$f" status)
   br=$(fm_field "$f" branch)
   na=$(fm_field "$f" proxima_acao)
@@ -161,7 +192,12 @@ render() { # note -> context text for BEST/TIE
   head="$head$(section 'Now:' "$(callout "$f")")"
   [ -n "$pf" ] && head="$head$(section 'Parent now:' "$(callout "$pf")")"
   head="$head$(section 'Open items:' "$(open_items "$f")")"
-  head="$head$(section 'Recent log:' "$(recent_log "$f")")"
+  dn=$(day_note "$f")
+  if [ -n "$dn" ]; then
+    head="$head$(section "Last day (${dn#"$VAULT"/}):" "$(last_block "$dn")")"
+  else
+    head="$head$(section 'Recent log:' "$(recent_log "$f")")"
+  fi
   if [ "${#head}" -gt "$MAX" ]; then
     head="${head:0:MAX}…(truncated)"
   fi
