@@ -16,6 +16,7 @@ Guide and docs page, in English and Brazilian Portuguese: https://danieltinois.g
 | `ai/skills/codex-review` | Claude asks Codex for a review | `~/.claude/skills/codex-review` |
 | `ai/skills/claude-review` | Codex asks Claude for a review | `~/.codex/skills/claude-review` |
 | `ai/skills/save-session` | Session handoff (save and resume) | `~/.claude/skills/save-session` and `~/.codex/skills/save-session` |
+| `ai/skills/project-panel` | Creates and updates the project panel in the Obsidian vault | `~/.claude/skills/project-panel` |
 
 ## Claude Code hooks (`~/.claude/settings.json`)
 
@@ -33,6 +34,21 @@ Guide and docs page, in English and Brazilian Portuguese: https://danieltinois.g
   Tools chosen by the repo (prettier from `node_modules`, the SDK from `.fvmrc`) only run for repos inside a
   trusted folder listed in `~/.config/claude-hooks/trusted-roots` (one per line; without the file,
   `~/development`). A repo cloned just to look at stays outside and nothing from it runs.
+- `project-panel.sh` (SessionStart, matcher `startup|resume|clear|compact`, timeout 5 s): finds the vault note
+  (`10 Projetos/**/*.md` with `tipo: projeto`) whose `pastas` is the longest prefix of the session folder and
+  injects its state (next action, open items, recent log) as context, capped at `PANEL_MAX_CHARS` (default 4000).
+  With no panel it asks the session to offer creating one, only inside `PANEL_ROOTS` and outside the folders
+  listed in `PANEL_IGNORE_FILE`. Paths come from three environment variables: `CEREBRO_VAULT` (default
+  `~/Obsidian/Cerebro`), `PANEL_ROOTS` (colon-separated, default `~/development`) and `PANEL_IGNORE_FILE`
+  (default `~/.config/claude-hooks/panel-ignore`). It fails open: any error exits 0 with no output, so a
+  session never breaks because of it. The `project-panel` skill creates and updates the panel. The "no panel"
+  offer shows only on `startup` and `resume`, not after `/clear` or `/compact`. Register it under `hooks` in
+  `~/.claude/settings.json`:
+
+  ```json
+  "SessionStart": [{ "matcher": "startup|resume|clear|compact",
+    "hooks": [{ "type": "command", "command": "~/.claude/scripts/project-panel.sh", "timeout": 5 }] }]
+  ```
 - `statusline.sh`: `git` runs with `core.fsmonitor=false` and `--no-optional-locks` (a third-party `.git/config`
   executes nothing) and control characters are stripped from folder/branch names. If the repo itself defines
   clean/smudge filters (`filter.*` outside global/system config), it skips `git status` and shows `?` instead of `*`.
@@ -77,6 +93,7 @@ ln -sfn $D/ai/skills/codex-review ~/.claude/skills/codex-review
 ln -sfn $D/ai/skills/claude-review ~/.codex/skills/claude-review
 ln -sfn $D/ai/skills/save-session ~/.claude/skills/save-session
 ln -sfn $D/ai/skills/save-session ~/.codex/skills/save-session
+ln -sfn $D/ai/skills/project-panel ~/.claude/skills/project-panel
 ln -sfn $D/ghostty.config ~/.config/ghostty/config
 ```
 
