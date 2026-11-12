@@ -1,8 +1,5 @@
 # Install/update everything with: brew bundle --file ~/development/dotfiles/Brewfile
 
-tap "nikitabobko/tap"      # AeroSpace
-tap "FelixKratz/formulae"  # JankyBorders
-
 # --- Languages / runtimes ---
 brew "fnm"          # Node versions (reads .nvmrc / .node-version)
 brew "pnpm"
@@ -25,10 +22,6 @@ brew "wget"
 brew "bash"         # modern Bash (required by SDKMAN)
 brew "lefthook"     # per-project git hooks (lint/format before commit)
 brew "fastfetch"    # system summary in the terminal
-
-# --- Desktop: tiling and window borders ---
-cask "nikitabobko/tap/aerospace"   # i3-like tiling window manager (config: aerospace.toml)
-brew "FelixKratz/formulae/borders" # colored border on the focused window (started by AeroSpace)
 
 # --- Apps ---
 # cask "docker-desktop"  # already installed outside brew (adopting fails on a macOS permission); uncomment on a new machine

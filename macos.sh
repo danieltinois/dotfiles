@@ -12,19 +12,20 @@ defaults write com.apple.dock magnification -bool false
 defaults write com.apple.dock show-recents -bool false
 defaults write com.apple.dock minimize-to-application -bool true
 defaults write com.apple.dock mru-spaces -bool false          # don't reorder Spaces automatically
-defaults write com.apple.dock expose-group-apps -bool true    # Mission Control grouped by app (AeroSpace recommends it)
+defaults write com.apple.dock expose-group-apps -bool true    # Mission Control grouped by app
 defaults write com.apple.dock launchanim -bool true           # bounce/zoom when an app opens
 # Dock with open apps only (Raycast becomes the launcher). Uncomment if you like it:
 # defaults write com.apple.dock static-only -bool true
 
-# --- Desktop: files and widgets visible, Stage Manager and native tiling off (AeroSpace tiles) ---
+# --- Desktop: files and widgets visible, Stage Manager off, native window tiling on ---
 defaults write com.apple.finder CreateDesktop -bool true          # files and folders on the desktop
 defaults write com.apple.WindowManager HideDesktop -bool false    # "Show items: on Desktop"
 defaults write com.apple.WindowManager StandardHideWidgets -bool false   # widgets on the desktop
 defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -bool false
 defaults write com.apple.WindowManager GloballyEnabled -bool false       # Stage Manager off
-defaults write com.apple.WindowManager EnableTilingByEdgeDrag -bool false    # native tiling would fight AeroSpace
-defaults write com.apple.WindowManager EnableTopTilingByEdgeDrag -bool false
+# Drag a window to a screen edge to tile it (or fn+ctrl+arrows / Window > Move & Resize)
+defaults write com.apple.WindowManager EnableTilingByEdgeDrag -bool true
+defaults write com.apple.WindowManager EnableTopTilingByEdgeDrag -bool true      # drag to the top = fill the screen
 
 # --- Menu bar ---
 # Hide the whole menu bar until you hover over it. Uncomment if you like it:

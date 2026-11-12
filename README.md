@@ -9,9 +9,7 @@ Guide and docs page, in English and Brazilian Portuguese: https://danieltinois.g
 | --- | --- | --- |
 | `Brewfile` | CLIs and apps | `brew bundle --file ~/development/dotfiles/Brewfile` |
 | `macos.sh` | macOS preferences (Dock, Finder, keyboard) | run with `bash macos.sh` |
-| `ghostty.config` | Terminal | `~/.config/ghostty/config` |
-| `aerospace.toml` | Tiling window manager (also starts JankyBorders); modifier is ctrl+alt | `~/.config/aerospace/aerospace.toml` |
-| `ai/AGENTS.md` | Global rules for the agents | `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md` |
+| `ghostty.config` | Terminal | `~/.config/ghostty/config` || `ai/AGENTS.md` | Global rules for the agents | `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md` |
 | `ai/claude/scripts/` | Claude Code hooks and status line | `~/.claude/scripts` |
 | `ai/claude/sandbox.json` | Claude Code sandbox config | copy into `~/.claude/settings.json` |
 | `ai/skills/codex-review` | Claude asks Codex for a review | `~/.claude/skills/codex-review` |
@@ -96,10 +94,7 @@ ln -sfn $D/ai/skills/save-session ~/.claude/skills/save-session
 ln -sfn $D/ai/skills/save-session ~/.codex/skills/save-session
 ln -sfn $D/ai/skills/project-panel ~/.claude/skills/project-panel
 ln -sfn $D/ghostty.config ~/.config/ghostty/config
-mkdir -p ~/.config/aerospace && ln -sfn $D/aerospace.toml ~/.config/aerospace/aerospace.toml
 ```
-
-AeroSpace asks for Accessibility permission on first launch (System Settings > Privacy & Security > Accessibility).
 
 `~/.claude/settings.json` is not symlinked because Claude Code rewrites that file itself.
 
