@@ -518,6 +518,8 @@
     <dl class="rules" data-l="en" lang="en">
       <dt>save-session</dt>
       <dd>Say "save the session" and it writes a handoff to <code>.claude/sessions/</code>: what worked with evidence, what failed and why, and the exact next step. "resume the session" picks it up in a clean session, which beats a long compacted one.</dd>
+      <dt>project-panel</dt>
+      <dd>Keeps a panel note per project in the Obsidian vault: next action, open items and a short log. The <code>project-panel.sh</code> hook loads it when a session starts, so any session picks the work up where it stopped. With no panel, it offers to create one. "update the project panel" patches it after a piece of work.</dd>
       <dt>codex-review</dt>
       <dd>"review with codex" sends the current diff to Codex for a second opinion before a commit or PR.</dd>
       <dt>claude-review</dt>
@@ -526,6 +528,8 @@
     <dl class="rules" data-l="pt" lang="pt-BR">
       <dt>save-session</dt>
       <dd>Fale "salva a sessão" e ela escreve um handoff em <code>.claude/sessions/</code>: o que funcionou com evidência, o que falhou e por quê, e o próximo passo exato. "retoma a sessão" continua numa sessão limpa, o que rende mais que uma longa e compactada.</dd>
+      <dt>project-panel</dt>
+      <dd>Mantém uma nota de painel por projeto no vault do Obsidian: próxima ação, itens abertos e um log curto. O hook <code>project-panel.sh</code> carrega o painel quando a sessão começa, então qualquer sessão retoma de onde parei. Sem painel, ele oferece criar um. "atualiza o painel" ajusta a nota depois de cada trabalho.</dd>
       <dt>codex-review</dt>
       <dd>"revisa com o codex" manda o diff atual para o Codex dar uma segunda opinião antes do commit ou do PR.</dd>
       <dt>claude-review</dt>
@@ -557,11 +561,12 @@
 <span class="ps">$ </span>ln -sfn $D/ai/skills/claude-review ~/.codex/skills/claude-review
 <span class="ps">$ </span>ln -sfn $D/ai/skills/save-session ~/.claude/skills/save-session
 <span class="ps">$ </span>ln -sfn $D/ai/skills/save-session ~/.codex/skills/save-session
+<span class="ps">$ </span>ln -sfn $D/ai/skills/project-panel ~/.claude/skills/project-panel
 <span class="ps">$ </span>ln -sfn $D/ghostty.config ~/.config/ghostty/config</pre><button class="copy" type="button"></button></div>
       </li>
       <li>
-        <p data-l="en" lang="en">Open <code>~/.claude/settings.json</code>, paste the <code>sandbox</code> block from <code>ai/claude/sandbox.json</code>, and register the hooks: <code>~/.claude/scripts/guard.sh</code> as PreToolUse, <code>format-on-edit.sh</code> as PostToolUse and <code>statusline.sh</code> as the status line.</p>
-        <p data-l="pt" lang="pt-BR">Abra o <code>~/.claude/settings.json</code>, cole o bloco <code>sandbox</code> do <code>ai/claude/sandbox.json</code> e registre os hooks: <code>~/.claude/scripts/guard.sh</code> como PreToolUse, <code>format-on-edit.sh</code> como PostToolUse e <code>statusline.sh</code> como status line.</p>
+        <p data-l="en" lang="en">Open <code>~/.claude/settings.json</code>, paste the <code>sandbox</code> block from <code>ai/claude/sandbox.json</code>, and register the hooks: <code>~/.claude/scripts/guard.sh</code> as PreToolUse, <code>format-on-edit.sh</code> as PostToolUse and <code>statusline.sh</code> as the status line. Add <code>~/.claude/scripts/project-panel.sh</code> under <code>SessionStart</code>, with the matcher <code>startup|resume|clear|compact</code> and a 5 second timeout.</p>
+        <p data-l="pt" lang="pt-BR">Abra o <code>~/.claude/settings.json</code>, cole o bloco <code>sandbox</code> do <code>ai/claude/sandbox.json</code> e registre os hooks: <code>~/.claude/scripts/guard.sh</code> como PreToolUse, <code>format-on-edit.sh</code> como PostToolUse e <code>statusline.sh</code> como status line. Adicione o <code>~/.claude/scripts/project-panel.sh</code> em <code>SessionStart</code>, com o matcher <code>startup|resume|clear|compact</code> e timeout de 5 segundos.</p>
       </li>
     </ol>
   </section>
