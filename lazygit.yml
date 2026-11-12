@@ -1,0 +1,26 @@
+# Same palette as ghostty.config (VS Code Dark+). Diffs go through delta, like git diff.
+gui:
+  nerdFontsVersion: "3"
+  theme:
+    activeBorderColor:
+      - "#569CD6"
+      - bold
+    inactiveBorderColor:
+      - "#808080"
+    searchingActiveBorderColor:
+      - "#4EC9B0"
+      - bold
+    optionsTextColor:
+      - "#569CD6"
+    selectedLineBgColor:
+      - "#264F78"
+    inactiveViewSelectedLineBgColor:
+      - "#2A2D2E"
+    unstagedChangesColor:
+      - "#F48771"
+    defaultFgColor:
+      - "#D4D4D4"
+git:
+  diffRenderers:
+    - colorArg: always
+      command: delta --dark --paging=never

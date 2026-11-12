@@ -22,6 +22,10 @@ brew "wget"
 brew "bash"         # modern Bash (required by SDKMAN)
 brew "lefthook"     # per-project git hooks (lint/format before commit)
 brew "fastfetch"    # system summary in the terminal
+brew "fzf-tab"      # Tab completion as a searchable fzf list with preview
+brew "atuin"        # shell history search (local only, see atuin.toml)
+brew "yazi"         # terminal file manager with previews (y)
+brew "lazydocker"   # terminal UI for Docker (lzd)
 
 # --- Apps ---
 # cask "docker-desktop"  # already installed outside brew (adopting fails on a macOS permission); uncomment on a new machine

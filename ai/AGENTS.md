@@ -13,6 +13,14 @@ Project rules (the repo's CLAUDE.md / AGENTS.md) always win over these.
 - Don't invent APIs: check the library version in the lockfile and the current docs (context7 MCP) before using something that is not in the repo.
 - Big task: propose a short plan before you start coding.
 
+## API flows (Mermaid in Obsidian)
+- When I ask for a new API, endpoint or integration, draw the flow in Mermaid **before** writing the code and show
+  it to me: a `sequenceDiagram` (client → API → DB/external services, with the success path and the main errors),
+  plus a `flowchart` for business rules and an `erDiagram` when there are tables.
+- Save it in the Obsidian vault (MCP `obsidian`) as `Fluxos/<METHOD path>.md` in the same folder as the project's
+  panel note (next to `Dias/`), and link it from today's day note. No panel: offer to create one (project-panel skill).
+- If the code changes the flow later, update the note in the same task. A copy in the repo's `docs/` only if I ask.
+
 ## Git
 - Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`).
 - Never commit straight to `main`, never `push --force` unless I ask. Only commit/push when I ask.
