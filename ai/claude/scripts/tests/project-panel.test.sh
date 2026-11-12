@@ -6,7 +6,7 @@ SCRIPT="$(cd "$(dirname "$0")/.." && pwd)/project-panel.sh"
 BASE=$(cd "$(mktemp -d "${TMPDIR:-/tmp}/pp.XXXX")" && pwd -P)
 trap 'rm -rf "$BASE"' EXIT
 F='```'
-RULE='Rule: this session starts from the panel above. When a piece of work that changed code, a card, a PR or a decision is done, update the panel with the project-panel skill (patch only: tick the checklist, set proxima_acao, add one dated Log line). Questions and short chats do not touch it.'
+RULE='Rule: this session starts from the panel above. When a piece of work that changed code, a card, a PR or a decision is done, update it with the project-panel skill: add a block to today'"'"'s day note (Dias/YYYY-MM-DD - <panel name>.md next to the panel) and patch the panel (tick the checklist, set proxima_acao). Questions and short chats do not touch it.'
 PASS=0
 FAIL=0
 FILTER=${1:-}
@@ -324,6 +324,88 @@ test_json_and_cap() {
   has "truncated marker" "$c" "…(truncated)"
   equal "ends with the whole rule" "$(tail -n 1 <<<"$c")" "$RULE"
   if [ "${#c}" -lt 1000 ]; then ok "short"; else fail "short" "${#c}"; fi
+}
+test_day_note_last_block() {
+  setup
+  project "10 Projetos/D/P.md" "pastas:
+  - $DEV/d" <<<"# P"
+  note "10 Projetos/D/Dias/2026-11-11 - P.md" <<<"# P — 2026-11-11"
+  note "10 Projetos/D/Dias/2026-11-12 - P.md" <<'EOF'
+---
+tipo: dia
+---
+# P — 2026-11-12
+
+## 09:00 · first topic
+- first line
+
+## 14:30 · second topic
+- changed the thing
+- Conferido: tests
+- Falta: review
+EOF
+  run_hook "$DEV/d"
+  c=$(ctx)
+  has "header" "$c" "Last day (10 Projetos/D/Dias/2026-11-12 - P.md):"
+  has "heading" "$c" "## 14:30 · second topic"
+  has "lines" "$c" "- Falta: review"
+  hasnt "older block" "$c" "first topic"
+  hasnt "no recent log" "$c" "Recent log:"
+}
+test_day_note_fallback_log() {
+  setup
+  project "10 Projetos/D/P.md" "pastas:
+  - $DEV/d" <<'EOF'
+# P
+## Log
+- l1
+- l2
+- l3
+- l4
+EOF
+  run_hook "$DEV/d"
+  c=$(ctx)
+  has "recent log" "$c" "Recent log:"
+  has "last line" "$c" "- l4"
+  hasnt "only 3" "$c" "- l1"
+  hasnt "no last day" "$c" "Last day ("
+}
+test_day_note_sibling_ignored() {
+  setup
+  project "10 Projetos/D/P.md" "pastas:
+  - $DEV/d" <<<"# P"
+  note "10 Projetos/D/Dias/2026-11-12 - P.md" <<<"## 10:00 · mine"
+  note "10 Projetos/D/Dias/2026-11-13 - Q.md" <<<"## 10:00 · theirs"
+  run_hook "$DEV/d"
+  c=$(ctx)
+  has "own newest" "$c" "Dias/2026-11-12 - P.md"
+  has "own content" "$c" "mine"
+  hasnt "sibling" "$c" "theirs"
+}
+test_day_note_block_cap() {
+  setup
+  project "10 Projetos/D/P.md" "pastas:
+  - $DEV/d" <<<"# P"
+  {
+    echo "## 10:00 · long"
+    for i in $(seq 1 29); do echo "- line $i"; done
+  } | note "10 Projetos/D/Dias/2026-11-12 - P.md"
+  run_hook "$DEV/d"
+  n=$(ctx | awk '/^Last day \(/ { on = 1; next } on && !NF { exit } on { n++ } END { print n + 0 }')
+  equal "15 lines" "$n" "15"
+  hasnt "cut" "$(ctx)" "- line 20"
+}
+test_day_note_bad_names_ignored() {
+  setup
+  project "10 Projetos/D/P.md" "pastas:
+  - $DEV/d" <<<"# P"
+  note "10 Projetos/D/Dias/notas - P.md" <<<"## 10:00 · bad1"
+  note "10 Projetos/D/Dias/2026-13-99x - P.md" <<<"## 10:00 · bad2"
+  run_hook "$DEV/d"
+  c=$(ctx)
+  hasnt "no last day" "$c" "Last day ("
+  hasnt "bad1" "$c" "bad1"
+  hasnt "bad2" "$c" "bad2"
 }
 test_bad_input() {
   setup

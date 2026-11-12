@@ -519,7 +519,7 @@
       <dt>save-session</dt>
       <dd>Say "save the session" and it writes a handoff to <code>.claude/sessions/</code>: what worked with evidence, what failed and why, and the exact next step. "resume the session" picks it up in a clean session, which beats a long compacted one.</dd>
       <dt>project-panel</dt>
-      <dd>Keeps a panel note per project in the Obsidian vault: next action, open items and a short log. The <code>project-panel.sh</code> hook loads it when a session starts, so any session picks the work up where it stopped. With no panel, it offers to create one. "update the project panel" patches it after a piece of work.</dd>
+      <dd>Keeps a panel note per project in the Obsidian vault: next action and open items, with the work history in one day note per day (<code>Dias/YYYY-MM-DD - panel.md</code>). The <code>project-panel.sh</code> hook loads it, plus the last block of the latest day note (or the Log when there is none), when a session starts, so any session picks the work up where it stopped. With no panel, it offers to create one. "update the project panel" patches it after a piece of work.</dd>
       <dt>codex-review</dt>
       <dd>"review with codex" sends the current diff to Codex for a second opinion before a commit or PR.</dd>
       <dt>claude-review</dt>
@@ -529,7 +529,7 @@
       <dt>save-session</dt>
       <dd>Fale "salva a sessão" e ela escreve um handoff em <code>.claude/sessions/</code>: o que funcionou com evidência, o que falhou e por quê, e o próximo passo exato. "retoma a sessão" continua numa sessão limpa, o que rende mais que uma longa e compactada.</dd>
       <dt>project-panel</dt>
-      <dd>Mantém uma nota de painel por projeto no vault do Obsidian: próxima ação, itens abertos e um log curto. O hook <code>project-panel.sh</code> carrega o painel quando a sessão começa, então qualquer sessão retoma de onde parei. Sem painel, ele oferece criar um. "atualiza o painel" ajusta a nota depois de cada trabalho.</dd>
+      <dd>Mantém uma nota de painel por projeto no vault do Obsidian: próxima ação e itens abertos, com o histórico em uma nota por dia (<code>Dias/YYYY-MM-DD - painel.md</code>). O hook <code>project-panel.sh</code> carrega o painel, mais o último bloco da nota do dia mais recente (ou o Log, se não houver), quando a sessão começa, então qualquer sessão retoma de onde parei. Sem painel, ele oferece criar um. "atualiza o painel" ajusta a nota depois de cada trabalho.</dd>
       <dt>codex-review</dt>
       <dd>"revisa com o codex" manda o diff atual para o Codex dar uma segunda opinião antes do commit ou do PR.</dd>
       <dt>claude-review</dt>
