@@ -54,7 +54,7 @@ The context says `No project panel in the Obsidian vault for <toplevel>.` Offer 
    - Callout `> [!brain] Agora`: two or three lines on where things stand.
    - A commands table (build, test, lint, run), only if it is a repo. Take the commands from the repo's own docs.
    - `## Próximas ações`: `- [ ]` items, the first one matching `proxima_acao`.
-   - `## Log`: starts empty or with one `- YYYY-MM-DD — created` style line.
+   - `## Log`: starts empty or with one `- YYYY-MM-DD — criado` style line.
    - `## Recursos e links`.
 4. **Second front:** the first note becomes the hub. Patch it to add a callout `> [!brain] Hoje, na ordem` (the fronts
    in the order to work on them) and the embed `![[Frentes.base]]` (base: `99 Sistema/Bases/Frentes.base`).

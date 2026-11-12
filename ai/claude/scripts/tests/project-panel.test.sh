@@ -23,7 +23,7 @@ mkrepo() {
 }
 note() { mkdir -p "$(dirname "$VAULT/$1")"; cat >"$VAULT/$1"; }
 run_hook() {
-  OUT=$(jq -n --arg cwd "$1" '{cwd:$cwd}' |
+  OUT=$(jq -n --arg cwd "$1" --arg source "${2:-}" 'if $source == "" then {cwd:$cwd} else {cwd:$cwd,source:$source} end' |
     env HOME="$HOME_" CEREBRO_VAULT="$VAULT" PANEL_ROOTS="$DEV" PANEL_IGNORE_FILE="$IGN" PANEL_MAX_CHARS="$MAXC" "$SCRIPT" 2>/dev/null)
   RC=$?
 }
@@ -204,6 +204,96 @@ test_ignored() {
   printf '\n%s/\n' "$DEV/n" >"$IGN"
   run_hook "$DEV/n"
   empty "silent"
+}
+test_ignore_comments() {
+  setup
+  mkrepo "$DEV/n"
+  printf '# a comment\n\n%s\n' "$DEV/n" >"$IGN"
+  run_hook "$DEV/n"
+  empty "listed folder still ignored"
+  printf '# %s\n' "$DEV/n" >"$IGN"
+  run_hook "$DEV/n"
+  has "commented-out line does not ignore" "$(ctx)" "No project panel"
+}
+test_offer_only_on_startup() {
+  setup
+  mkrepo "$DEV/n"
+  run_hook "$DEV/n" compact; empty "compact"
+  run_hook "$DEV/n" clear; empty "clear"
+  run_hook "$DEV/n" startup; has "startup" "$(ctx)" "No project panel"
+  run_hook "$DEV/n" resume; has "resume" "$(ctx)" "No project panel"
+  run_hook "$DEV/n"; has "no source" "$(ctx)" "No project panel"
+  project "10 Projetos/A/A.md" "pastas:
+  - $DEV/n" <<<"# A"
+  run_hook "$DEV/n" compact
+  has "panel shows on compact" "$(ctx)" "Project panel (Obsidian vault): 10 Projetos/A/A.md"
+}
+test_non_projeto_ignored() {
+  setup
+  mkrepo "$DEV/n"
+  note "10 Projetos/X/X.md" <<EOF
+---
+tipo: nota
+pastas:
+  - $DEV/n
+---
+texto
+EOF
+  run_hook "$DEV/n"
+  hasnt "not chosen" "$(ctx)" "Project panel (Obsidian vault)"
+  has "offer" "$(ctx)" "No project panel"
+}
+test_folded_scalar() {
+  setup
+  note "10 Projetos/W/W.md" <<EOF
+---
+tipo: projeto
+pastas:
+  - $DEV/w
+proxima_acao: Revisão dos PRs 9021 (A) e 9022 (B); decidir SSO (PR C) e se o
+  editor vê Usuários; depois PR D
+status: ativo
+---
+# W
+EOF
+  run_hook "$DEV/w"
+  has "joined" "$(ctx)" "Next action: Revisão dos PRs 9021 (A) e 9022 (B); decidir SSO (PR C) e se o editor vê Usuários; depois PR D"
+  has "next key still read" "$(ctx)" "Status: ativo"
+}
+test_folded_list_item() {
+  setup
+  note "10 Projetos/W/W.md" <<EOF
+---
+tipo: projeto
+pastas:
+  - $DEV/long folder name with
+    many spaces
+  - $DEV/other
+status: ativo
+---
+# W
+EOF
+  run_hook "$DEV/long folder name with many spaces/sub"
+  has "wrapped item matches" "$(ctx)" "10 Projetos/W/W.md"
+  run_hook "$DEV/other"
+  has "next item still read" "$(ctx)" "10 Projetos/W/W.md"
+}
+test_block_scalar() {
+  setup
+  note "10 Projetos/W/W.md" <<EOF
+---
+tipo: projeto
+pastas:
+  - $DEV/w
+proxima_acao: >-
+  first part
+  second part
+status: ativo
+---
+# W
+EOF
+  run_hook "$DEV/w"
+  has "joined" "$(ctx)" "Next action: first part second part"
 }
 test_outside_roots() {
   setup

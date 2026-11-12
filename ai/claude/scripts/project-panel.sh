@@ -33,15 +33,23 @@ frontmatter() { # only the block between the --- on line 1 and the next ---
 body() { # everything after the frontmatter
   awk 'NR == 1 && /^---[ \t\r]*$/ { fm = 1; next } fm && /^---[ \t\r]*$/ { fm = 0; next } fm { next } { print }' "$1"
 }
-fm_field() { # file key -> scalar without quotes
+fm_field() { # file key -> scalar without quotes; wrapped and `>` / `|` block values are joined with single spaces
   frontmatter "$1" | awk -v k="$2" -v q="'" '
-    $0 ~ ("^" k ":") {
+    $0 ~ ("^" k ":") && !on {
       v = $0; sub("^" k ":[ \t]*", "", v); gsub(/[ \t\r]+$/, "", v)
+      if (v ~ /^[>|][-+]?$/) v = ""
+      on = 1; found = 1; next
+    }
+    on && /^[ \t]*$/ { next }
+    on && /^[ \t]+[^ \t]/ { s = $0; gsub(/^[ \t]+|[ \t\r]+$/, "", s); v = (v == "" ? s : v " " s); next }
+    on { exit }
+    END {
+      if (!found) exit
       gsub("^[\"" q "]|[\"" q "]$", "", v)
-      print v; exit
+      print v
     }'
 }
-fm_list() { # file key -> one item per line (block, inline or scalar), quotes off, ~ expanded, no trailing /
+fm_list() { # file key -> one item per line (block, inline or scalar; wrapped items joined), quotes off, ~ expanded, no trailing /
   frontmatter "$1" | awk -v k="$2" -v q="'" -v home="$HOME" '
     function clean(s) {
       gsub(/^[ \t]+|[ \t\r]+$/, "", s)
@@ -50,21 +58,28 @@ fm_list() { # file key -> one item per line (block, inline or scalar), quotes of
       sub(/\/+$/, "", s)
       if (s != "") print s
     }
-    $0 ~ ("^" k ":") {
-      collecting = 0
-      v = $0; sub("^" k ":[ \t]*", "", v); gsub(/[ \t\r]+$/, "", v)
-      if (v == "") { collecting = 1; next }
-      if (v ~ /^\[/) {
-        sub(/^\[/, "", v); sub(/\][ \t]*$/, "", v)
+    function add(s) { gsub(/^[ \t]+|[ \t\r]+$/, "", s); cur = (cur == "" ? s : cur " " s) }
+    function flush(  v, n, i, a) {
+      if (st == 1 && cur ~ /^\[/) {
+        v = cur; sub(/^\[/, "", v); sub(/\][ \t]*$/, "", v)
         n = split(v, a, ",")
         for (i = 1; i <= n; i++) clean(a[i])
-        next
-      }
-      clean(v); next
+      } else if (st) clean(cur)
+      st = 0; cur = ""
     }
-    collecting && /^[ \t]*-[ \t]+/ { v = $0; sub(/^[ \t]*-[ \t]+/, "", v); clean(v); next }
-    collecting && /^[ \t]*$/ { next }
-    { collecting = 0 }'
+    $0 ~ ("^" k ":") {
+      flush()
+      v = $0; sub("^" k ":[ \t]*", "", v); gsub(/[ \t\r]+$/, "", v)
+      if (v == "") { st = 2; next }
+      st = 1
+      if (v !~ /^[>|][-+]?$/) add(v)
+      next
+    }
+    st && /^[ \t]*$/ { next }
+    st == 2 && /^[ \t]*-[ \t]+/ { flush(); st = 2; v = $0; sub(/^[ \t]*-[ \t]+/, "", v); add(v); next }
+    st && /^[ \t]+[^ \t]/ { add($0); next }
+    st { flush() }
+    END { flush() }'
 }
 
 callout() { # first "Agora" / "Hoje, na ordem" callout of the body, without the title line or the leading ">"
@@ -166,6 +181,7 @@ offer() { # toplevel -> offer text, or nothing when the folder is out of scope o
   if [ -f "$IGNORE" ]; then
     while IFS= read -r p || [ -n "$p" ]; do
       p=${p%$'\r'}
+      case $p in '' | '#'*) continue ;; esac
       case $p in '~' | '~/'*) p="$HOME${p#\~}" ;; esac
       p=$(strip_slash "$p")
       [ -n "$p" ] || continue
@@ -177,9 +193,10 @@ offer() { # toplevel -> offer text, or nothing when the folder is out of scope o
 }
 
 main() {
-  local in cwd common top text
+  local in cwd src common top text
   in=$(cat)
   cwd=$(jq -r '.cwd // empty' <<<"$in" 2>/dev/null) || return 0
+  src=$(jq -r '.source // empty' <<<"$in" 2>/dev/null) || src=""
   [ -n "$cwd" ] || return 0
   [ -d "$DIR" ] || return 0
   cwd=$(strip_slash "$cwd")
@@ -191,6 +208,7 @@ main() {
   if [ -n "$BEST" ]; then
     text=$(render "$BEST")
   else
+    case $src in '' | startup | resume) ;; *) return 0 ;; esac # offer once per session, not after /clear or /compact
     top=$(git -c core.fsmonitor=false -C "$cwd" rev-parse --show-toplevel 2>/dev/null) || top=""
     [ -n "$top" ] || return 0
     text=$(offer "$(strip_slash "$top")")
