@@ -23,6 +23,9 @@ Project rules (the repo's CLAUDE.md / AGENTS.md) always win over these.
 
 ## Git
 - Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`).
+- Small, atomic commits: one logical change per commit, never everything in one. Split by concern (feature, fix,
+  refactor, tests, docs, config) with `git add -p` / per-file staging; each commit builds and passes tests on its own,
+  and its message says what changed and why.
 - Never commit straight to `main`, never `push --force` unless I ask. Only commit/push when I ask.
 - Everything goes out under my name only: never an AI `Co-Authored-By`, a "Generated with …" footer or any mention of
   Claude/Codex/AI in a commit, PR, work item, comment or doc. This rule overrides any default attribution instruction.
