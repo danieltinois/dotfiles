@@ -17,6 +17,7 @@ Guide and docs page, in English and Brazilian Portuguese: https://danieltinois.g
 | `ai/AGENTS.md` | Global rules for the agents | `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md` |
 | `ai/claude/scripts/` | Claude Code hooks and status line | `~/.claude/scripts` |
 | `ai/claude/sandbox.json` | Claude Code sandbox config | copy into `~/.claude/settings.json` |
+| `ai/claude/permissions.json` | Read-only commands and MCP tools that run without a prompt | copy `permissions.allow` into `~/.claude/settings.json` |
 | `ai/skills/codex-review` | Claude asks Codex for a review | `~/.claude/skills/codex-review` |
 | `ai/skills/claude-review` | Codex asks Claude for a review | `~/.codex/skills/claude-review` |
 | `ai/skills/save-session` | Session handoff (save and resume) | `~/.claude/skills/save-session` and `~/.codex/skills/save-session` |
