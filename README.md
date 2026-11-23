@@ -10,6 +10,7 @@ Guide and docs page, in English and Brazilian Portuguese: https://danieltinois.g
 | `Brewfile` | CLIs and apps | `brew bundle --file ~/development/dotfiles/Brewfile` |
 | `macos.sh` | macOS preferences (Dock, Finder, keyboard) | run with `bash macos.sh` |
 | `ghostty.config` | Terminal | `~/.config/ghostty/config` |
+| `tmux.conf` | tmux for agents in panes (mouse, Shift+Enter and notifications for Claude Code, same colors) | `~/.config/tmux/tmux.conf` |
 | `bat.config` | bat theme (delta uses the same via `git config delta.syntax-theme`) | `~/.config/bat/config` |
 | `lazygit.yml` | lazygit theme and delta diffs | `~/Library/Application Support/lazygit/config.yml` |
 | `atuin.toml` | Shell history (local only, no sync) | `~/.config/atuin/config.toml` |

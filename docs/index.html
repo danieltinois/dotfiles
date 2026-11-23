@@ -365,6 +365,7 @@
 ├── Brewfile                        <span class="dim"># CLIs and apps (brew bundle)</span>
 ├── macos.sh                        <span class="dim"># Dock, Finder, keyboard</span>
 ├── ghostty.config                  <span class="dim"># terminal font and colors</span>
+├── tmux.conf                       <span class="dim"># agents in panes</span>
 ├── <span class="blue">ai/</span>
 │   ├── AGENTS.md                   <span class="dim"># rules for both agents</span>
 │   ├── <span class="blue">claude/</span>
@@ -384,6 +385,7 @@
 ├── Brewfile                        <span class="dim"># CLIs e apps (brew bundle)</span>
 ├── macos.sh                        <span class="dim"># Dock, Finder, teclado</span>
 ├── ghostty.config                  <span class="dim"># fonte e cores do terminal</span>
+├── tmux.conf                       <span class="dim"># agentes em painéis</span>
 ├── <span class="blue">ai/</span>
 │   ├── AGENTS.md                   <span class="dim"># regras dos dois agentes</span>
 │   ├── <span class="blue">claude/</span>
@@ -562,7 +564,8 @@
 <span class="ps">$ </span>ln -sfn $D/ai/skills/save-session ~/.claude/skills/save-session
 <span class="ps">$ </span>ln -sfn $D/ai/skills/save-session ~/.codex/skills/save-session
 <span class="ps">$ </span>ln -sfn $D/ai/skills/project-panel ~/.claude/skills/project-panel
-<span class="ps">$ </span>ln -sfn $D/ghostty.config ~/.config/ghostty/config</pre><button class="copy" type="button"></button></div>
+<span class="ps">$ </span>ln -sfn $D/ghostty.config ~/.config/ghostty/config
+<span class="ps">$ </span>mkdir -p ~/.config/tmux && ln -sfn $D/tmux.conf ~/.config/tmux/tmux.conf</pre><button class="copy" type="button"></button></div>
       </li>
       <li>
         <p data-l="en" lang="en">Open <code>~/.claude/settings.json</code>, paste the <code>sandbox</code> block from <code>ai/claude/sandbox.json</code>, and register the hooks: <code>~/.claude/scripts/guard.sh</code> as PreToolUse, <code>format-on-edit.sh</code> as PostToolUse and <code>statusline.sh</code> as the status line. Add <code>~/.claude/scripts/project-panel.sh</code> under <code>SessionStart</code>, with the matcher <code>startup|resume|clear|compact</code> and a 5 second timeout.</p>
