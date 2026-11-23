@@ -9,7 +9,11 @@ Guide and docs page, in English and Brazilian Portuguese: https://danieltinois.g
 | --- | --- | --- |
 | `Brewfile` | CLIs and apps | `brew bundle --file ~/development/dotfiles/Brewfile` |
 | `macos.sh` | macOS preferences (Dock, Finder, keyboard) | run with `bash macos.sh` |
-| `ghostty.config` | Terminal | `~/.config/ghostty/config` || `ai/AGENTS.md` | Global rules for the agents | `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md` |
+| `ghostty.config` | Terminal | `~/.config/ghostty/config` |
+| `bat.config` | bat theme (delta uses the same via `git config delta.syntax-theme`) | `~/.config/bat/config` |
+| `lazygit.yml` | lazygit theme and delta diffs | `~/Library/Application Support/lazygit/config.yml` |
+| `atuin.toml` | Shell history (local only, no sync) | `~/.config/atuin/config.toml` |
+| `ai/AGENTS.md` | Global rules for the agents | `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md` |
 | `ai/claude/scripts/` | Claude Code hooks and status line | `~/.claude/scripts` |
 | `ai/claude/sandbox.json` | Claude Code sandbox config | copy into `~/.claude/settings.json` |
 | `ai/skills/codex-review` | Claude asks Codex for a review | `~/.claude/skills/codex-review` |
@@ -94,6 +98,12 @@ ln -sfn $D/ai/skills/save-session ~/.claude/skills/save-session
 ln -sfn $D/ai/skills/save-session ~/.codex/skills/save-session
 ln -sfn $D/ai/skills/project-panel ~/.claude/skills/project-panel
 ln -sfn $D/ghostty.config ~/.config/ghostty/config
+mkdir -p ~/.config/bat ~/.config/atuin "$HOME/Library/Application Support/lazygit"
+ln -sfn $D/bat.config ~/.config/bat/config
+ln -sfn $D/atuin.toml ~/.config/atuin/config.toml
+ln -sfn $D/lazygit.yml "$HOME/Library/Application Support/lazygit/config.yml"
+git config --global delta.syntax-theme "Visual Studio Dark+"
+atuin import zsh
 ```
 
 `~/.claude/settings.json` is not symlinked because Claude Code rewrites that file itself.

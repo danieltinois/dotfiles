@@ -13,6 +13,7 @@ defaults write com.apple.dock show-recents -bool false
 defaults write com.apple.dock minimize-to-application -bool true
 defaults write com.apple.dock mru-spaces -bool false          # don't reorder Spaces automatically
 defaults write com.apple.dock expose-group-apps -bool true    # Mission Control grouped by app
+defaults write com.apple.dock expose-animation-duration -float 0.1   # faster Mission Control (other animations stay)
 defaults write com.apple.dock launchanim -bool true           # bounce/zoom when an app opens
 # Dock with open apps only (Raycast becomes the launcher). Uncomment if you like it:
 # defaults write com.apple.dock static-only -bool true
@@ -46,6 +47,9 @@ defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true       #
 
 # --- System ---
 defaults write NSGlobalDomain AppleInterfaceStyle -string Dark
+# Accent and text selection colors matching the terminal palette (blue #569CD6, selection #264F78)
+defaults write NSGlobalDomain AppleAccentColor -int 4
+defaults write NSGlobalDomain AppleHighlightColor -string "0.149020 0.309804 0.470588 Other"
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 defaults write NSGlobalDomain AppleShowScrollBars -string WhenScrolling
 # Window animations on (open/close and resize). An older version of this script turned them off.

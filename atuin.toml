@@ -1,0 +1,13 @@
+# Shell history in a local SQLite database. No account and no sync: nothing leaves this machine.
+auto_sync = false
+update_check = false
+style = "compact"
+inline_height = 20
+filter_mode = "global"
+secrets_filter = true
+
+[output]
+enabled = false   # don't store the output of commands
+
+[ai]
+enabled = false
