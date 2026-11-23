@@ -104,6 +104,10 @@ ln -sfn $D/bat.config ~/.config/bat/config
 ln -sfn $D/atuin.toml ~/.config/atuin/config.toml
 ln -sfn $D/lazygit.yml "$HOME/Library/Application Support/lazygit/config.yml"
 git config --global delta.syntax-theme "Visual Studio Dark+"
+git config --global rebase.autoStash true        # rebase/pull --rebase with a dirty tree
+git config --global diff.algorithm histogram     # clearer diffs when code moves
+git config --global branch.sort -committerdate   # git branch: most recent first
+git config --global commit.verbose true          # show the diff in the commit editor
 atuin import zsh
 ```
 
